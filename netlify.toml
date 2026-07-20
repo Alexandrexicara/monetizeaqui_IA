@@ -5,9 +5,9 @@
 [[redirects]]
   from = "/"
   to = "/landing.html"
-  status = 302
+  status = 200
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+  from = "/index"
+  to = "/painel"
+  status = 301
