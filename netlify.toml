@@ -6,8 +6,9 @@
   from = "/"
   to = "/landing.html"
   status = 200
+  force = true
 
 [[redirects]]
-  from = "/index"
-  to = "/painel"
-  status = 301
+  from = "/*"
+  to = "/:splat"
+  status = 200
