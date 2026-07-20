@@ -2,13 +2,9 @@
   publish = "public"
   command = "echo 'Build concluido'"
 
+# Define Landing Page como página inicial SEM redirecionamento
 [[redirects]]
   from = "/"
   to = "/landing.html"
   status = 200
   force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/:splat"
-  status = 200
