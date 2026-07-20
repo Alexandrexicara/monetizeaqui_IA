@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin | Kawi</title>
+    <style>
+        :root { --cinza-escuro: #1A1D23; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: var(--cinza-medio); padding: 3rem; border-radius: var(--borda); border-left: 4px solid var(--laranja); max-width: 450px; width: 90%; }
+        .login-box h1 { color: var(--verde-fluo); margin-bottom: 2rem; text-align: center; font-size: 1.8rem; }
+        .campo { margin-bottom: 1.5rem; }
+        .campo label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: white; }
+        .campo input { width: 100%; padding: 0.9rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; font-size: 1rem; }
+        .campo input:focus { outline: none; border-color: var(--azul); }
+        button[type="submit"] { width: 100%; padding: 1rem; background: var(--laranja); color: white; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #ff9a33; }
+        .voltar { text-align: center; margin-top: 1.5rem; }
+        .voltar a { color: var(--azul); text-decoration: none; font-weight: 600; }
+        .voltar a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔐 Painel Admin</h1>
+        <form id="formLogin">
+            <div class="campo">
+                <label>Usuário</label>
+                <input type="text" id="usuario" required placeholder="admin">
+            </div>
+            <div class="campo">
+                <label>Senha</label>
+                <input type="password" id="senha" required placeholder="••••••••">
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <div class="voltar">
+            <a href="index.html">← Voltar ao site</a>
+        </div>
+    </div>
+    <script>
+        const STORAGE_ADMIN = 'kawi_admin_session';
+        document.getElementById('formLogin').addEventListener('submit', e => {
+            e.preventDefault();
+            const usuario = document.getElementById('usuario').value.trim();
+            const senha = document.getElementById('senha').value.trim();
+            // Credenciais padrão (em produção, usar backend real)
+            if (usuario === 'admin' && senha === 'admin123') {
+                const session = { logado: true, usuario: usuario, timestamp: Date.now() };
+                localStorage.setItem(STORAGE_ADMIN, JSON.stringify(session));
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                alert('❌ Usuário ou senha incorretos!');
+            }
+        });
+    </script>
+</body>
+</html>

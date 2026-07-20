@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cliques Automáticos | Kawi</title>
+    <style>
+        :root { --cinza-escuro: #1A1D23; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; }
+        header { background: var(--cinza-medio); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--laranja); }
+        header h1 { color: var(--verde-fluo); font-size: 1.7rem; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: var(--borda); font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: 0.3s; }
+        .btn-laranja { background: var(--laranja); color: white; }
+        .btn-azul { background: var(--azul); color: white; }
+        .btn-verde { background: var(--verde-fluo); color: #1A1D23; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--cinza-medio); padding: 1.5rem; border-radius: var(--borda); border-left: 4px solid var(--azul); }
+        .stat-card h3 { color: var(--verde-fluo); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .stat-card .valor { font-size: 2rem; font-weight: bold; color: white; }
+        .grid-videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.8rem; }
+        .card-video { background: var(--cinza-medio); border-radius: var(--borda); padding: 1.5rem; border-top: 3px solid var(--laranja); }
+        .card-video h3 { color: var(--verde-fluo); margin-bottom: 1rem; }
+        .progresso-container { background: var(--cinza-escuro); border-radius: var(--borda); padding: 1rem; margin: 1rem 0; }
+        .progresso-label { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .progresso-bar { background: var(--cinza-claro); height: 20px; border-radius: 10px; overflow: hidden; }
+        .progresso-fill { height: 100%; background: linear-gradient(90deg, var(--verde-fluo), var(--azul)); transition: width 0.5s; }
+        .meta { margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .status-automatico { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem; }
+        .status-ativo { background: rgba(0,255,148,0.2); color: var(--verde-fluo); }
+        .status-inativo { background: rgba(255,125,0,0.2); color: var(--laranja); }
+        .vazio { text-align: center; padding: 4rem 2rem; color: #888; font-size: 1.2rem; }
+        .atualizacao { text-align: center; color: var(--verde-fluo); font-size: 0.9rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Dashboard - Cliques Automáticos</h1>
+        <div style="display:flex; gap:1rem; align-items:center;">
+            <a href="cadastro.html" class="btn btn-laranja">+ Novo Vídeo</a>
+            <a href="index.html" class="btn btn-azul">← Voltar</a>
+        </div>
+    </header>
+    <main class="container">
+        <p class="atualizacao">⏱️ Atualização automática: <span id="tempo-restante">30</span>s</p>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Meus Vídeos</h3>
+                <div class="valor" id="stat-videos">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Cliques</h3>
+                <div class="valor" id="stat-cliques">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Cliques Automáticos</h3>
+                <div class="valor" id="stat-automaticos">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Meus Créditos</h3>
+                <div class="valor" id="stat-creditos">0</div>
+            </div>
+        </div>
+        <h2 style="color: var(--verde-fluo); margin-bottom: 1.5rem;">📹 Meus Vídeos com Cliques Automáticos</h2>
+        <section id="lista-videos" class="grid-videos">
+            <p class="vazio">Carregando...</p>
+        </section>
+    </main>
+    <script>
+        const STORAGE_VIDEOS = 'kawi_videos';
+        const STORAGE_USUARIO = 'kawi_usuario';
+        const STORAGE_ASSINATURAS = 'kawi_assinaturas';
+        let tempoAtualizacao = 30;
+
+        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
+        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
+        function getUsuario() {
+            let usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
+            if (!usuario) {
+                usuario = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random() * 9999), creditos: 0 };
+                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
+            }
+            return usuario;
+        }
+
+        function processarVisualizacoesAutomaticas() {
+            let videos = getDados(STORAGE_VIDEOS);
+            let assinaturas = getDados(STORAGE_ASSINATURAS);
+            let alterou = false;
+            
+            videos.forEach(v => {
+                // Processar bônus grátis
+                if (v.bonusGratisAtivo && v.visualizacoesAutomaticas > 0) {
+                    const adicionar = Math.min(50, v.visualizacoesAutomaticas);
+                    v.visualizacoes += adicionar;
+                    v.visualizacoesAutomaticas -= adicionar;
+                    alterou = true;
+                }
+                
+                // Processar planos pagos
+                const assinatura = assinaturas.find(a => a.videoId === v.id);
+                if (assinatura) {
+                    const planoDiario = assinatura.plano === 'p5000' ? 5000 : 1000;
+                    v.visualizacoes += planoDiario;
+                    alterou = true;
+                }
+            });
+            
+            if (alterou) salvarDados(STORAGE_VIDEOS, videos);
+            return alterou;
+        }
+
+        function carregarDashboard() {
+            const usuario = getUsuario();
+            const videos = getDados(STORAGE_VIDEOS);
+            const meusVideos = videos.filter(v => v.criadorId === usuario.id);
+            const listaEl = document.getElementById('lista-videos');
+
+            // Estatísticas
+            document.getElementById('stat-videos').textContent = meusVideos.length;
+            document.getElementById('stat-cliques').textContent = meusVideos.reduce((sum, v) => sum + (v.visualizacoes || 0), 0).toLocaleString();
+            document.getElementById('stat-automaticos').textContent = meusVideos.reduce((sum, v) => sum + (v.visualizacoesAutomaticas || 0), 0).toLocaleString();
+            document.getElementById('stat-creditos').textContent = usuario.creditos;
+
+            if (meusVideos.length === 0) {
+                listaEl.innerHTML = '<p class="vazio">Você ainda não tem vídeos cadastrados. <a href="cadastro.html" style="color: var(--verde-fluo);">Cadastre o primeiro!</a></p>';
+                return;
+            }
+
+            listaEl.innerHTML = meusVideos.map(video => {
+                const totalAutomatico = video.visualizacoesAutomaticas || 0;
+                const totalJaRecebido = video.visualizacoes || 0;
+                const progresso = totalAutomatico > 0 ? ((1000 - totalAutomatico) / 1000) * 100 : 100;
+                const assinaturas = getDados(STORAGE_ASSINATURAS);
+                const temPlano = assinaturas.find(a => a.videoId === video.id);
+                const planoNome = temPlano ? (temPlano.plano === 'p5000' ? '+5.000/dia' : '+1.000/dia') : null;
+
+                return '<div class="card-video">' +
+                    '<h3>' + video.titulo + '</h3>' +
+                    '<p class="meta">🔗 Link: <a href="' + video.link + '" target="_blank" style="color: var(--azul);">' + video.link + '</a></p>' +
+                    '<div class="progresso-container">' +
+                        '<div class="progresso-label">' +
+                            '<span>📊 Progresso Automático</span>' +
+                            '<span>' + (1000 - totalAutomatico) + '/1.000</span>' +
+                        '</div>' +
+                        '<div class="progresso-bar">' +
+                            '<div class="progresso-fill" style="width: ' + progresso + '%;"></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<p class="meta">✅ Total de cliques recebidos: <strong>' + totalJaRecebido.toLocaleString() + '</strong></p>' +
+                    (totalAutomatico > 0 ? 
+                        '<span class="status-automatico status-ativo">🔄 Automático: ' + totalAutomatico + ' restantes</span>' :
+                        '<span class="status-automatico status-inativo">⏸️ Automático concluído</span>'
+                    ) +
+                    (planoNome ? '<br><span class="status-automatico status-ativo">⭐ Plano: ' + planoNome + '</span>' : '') +
+                    '<div style="margin-top: 1rem;">' +
+                        '<a href="planos.html?video=' + video.id + '" class="btn btn-azul" style="font-size: 0.9rem;">Upgrade Plano</a>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function atualizacaoAutomatica() {
+            tempoAtualizacao--;
+            document.getElementById('tempo-restante').textContent = tempoAtualizacao;
+            
+            if (tempoAtualizacao <= 0) {
+                const alterou = processarVisualizacoesAutomaticas();
+                if (alterou) {
+                    carregarDashboard();
+                }
+                tempoAtualizacao = 30;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            processarVisualizacoesAutomaticas();
+            carregarDashboard();
+            setInterval(atualizacaoAutomatica, 1000);
+        });
+    </script>
+</body>
+</html>

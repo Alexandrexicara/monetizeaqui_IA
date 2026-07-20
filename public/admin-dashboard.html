@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | Kawi</title>
+    <style>
+        :root { --cinza-escuro: #1A1D23; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; }
+        header { background: var(--cinza-medio); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--laranja); }
+        header h1 { color: var(--verde-fluo); font-size: 1.7rem; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: var(--borda); font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: 0.3s; }
+        .btn-sair { background: #dc3545; color: white; }
+        .btn-sair:hover { background: #ff4d5a; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 5%; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--cinza-medio); padding: 1.5rem; border-radius: var(--borda); border-left: 4px solid var(--azul); }
+        .stat-card h3 { color: var(--verde-fluo); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .stat-card .valor { font-size: 2rem; font-weight: bold; color: white; }
+        .tabela-container { background: var(--cinza-medio); padding: 2rem; border-radius: var(--borda); overflow-x: auto; }
+        .tabela-container h2 { color: var(--verde-fluo); margin-bottom: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--cinza-claro); }
+        th { color: var(--laranja); font-weight: 600; }
+        tr:hover { background: var(--cinza-claro); }
+        .btn-editar { background: var(--azul); color: white; padding: 0.5rem 1rem; font-size: 0.9rem; margin-right: 0.5rem; }
+        .btn-deletar { background: #dc3545; color: white; padding: 0.5rem 1rem; font-size: 0.9rem; }
+        .vazio { text-align: center; padding: 3rem; color: #888; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--cinza-medio); padding: 2rem; border-radius: var(--borda); max-width: 500px; width: 90%; }
+        .modal-content h2 { color: var(--verde-fluo); margin-bottom: 1.5rem; }
+        .campo { margin-bottom: 1rem; }
+        .campo label { display: block; margin-bottom: 0.5rem; color: white; }
+        .campo input { width: 100%; padding: 0.8rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; }
+        .modal-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
+        .btn-cancelar { background: var(--cinza-claro); color: white; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🔐 Dashboard Admin</h1>
+        <button class="btn btn-sair" onclick="sair()">Sair</button>
+    </header>
+    <main class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total de Usuários</h3>
+                <div class="valor" id="stat-usuarios">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Vídeos</h3>
+                <div class="valor" id="stat-videos">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Visualizações</h3>
+                <div class="valor" id="stat-views">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Assinaturas Ativas</h3>
+                <div class="valor" id="stat-assinaturas">0</div>
+            </div>
+        </div>
+        <div class="tabela-container">
+            <h2>👥 Usuários Cadastrados</h2>
+            <table id="tabela-usuarios">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Créditos</th>
+                        <th>Vídeos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-usuarios"></tbody>
+            </table>
+        </div>
+    </main>
+    <div class="modal" id="modal-editar">
+        <div class="modal-content">
+            <h2>Editar Usuário</h2>
+            <div class="campo">
+                <label>Nome</label>
+                <input type="text" id="edit-nome">
+            </div>
+            <div class="campo">
+                <label>Créditos</label>
+                <input type="number" id="edit-creditos">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="btn btn-editar" onclick="salvarEdicao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const STORAGE_ADMIN = 'kawi_admin_session';
+        const STORAGE_USUARIO = 'kawi_usuario';
+        const STORAGE_VIDEOS = 'kawi_videos';
+        const STORAGE_ASSINATURAS = 'kawi_assinaturas';
+        let usuarioEditando = null;
+
+        function verificarAuth() {
+            const session = JSON.parse(localStorage.getItem(STORAGE_ADMIN) || 'null');
+            if (!session || !session.logado) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function sair() {
+            localStorage.removeItem(STORAGE_ADMIN);
+            window.location.href = 'admin-login.html';
+        }
+
+        function getDados(chave) {
+            return JSON.parse(localStorage.getItem(chave) || '[]');
+        }
+
+        function salvarDados(chave, dados) {
+            localStorage.setItem(chave, JSON.stringify(dados));
+        }
+
+        function carregarDados() {
+            const usuarios = getDados(STORAGE_USUARIO);
+            const videos = getDados(STORAGE_VIDEOS);
+            const assinaturas = getDados(STORAGE_ASSINATURAS);
+
+            // Estatísticas
+            document.getElementById('stat-usuarios').textContent = usuarios.length;
+            document.getElementById('stat-videos').textContent = videos.length;
+            const totalViews = videos.reduce((sum, v) => sum + (v.visualizacoes || 0), 0);
+            document.getElementById('stat-views').textContent = totalViews.toLocaleString();
+            document.getElementById('stat-assinaturas').textContent = assinaturas.length;
+
+            // Tabela de usuários
+            const tbody = document.getElementById('lista-usuarios');
+            if (usuarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhum usuário cadastrado</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = usuarios.map(u => {
+                const videosUsuario = videos.filter(v => v.criadorId === u.id).length;
+                return '<tr>' +
+                    '<td>' + u.id + '</td>' +
+                    '<td>' + u.nome + '</td>' +
+                    '<td>' + u.creditos + '</td>' +
+                    '<td>' + videosUsuario + '</td>' +
+                    '<td>' +
+                        '<button class="btn btn-editar" onclick="editarUsuario(' + u.id + ')">Editar</button>' +
+                        '<button class="btn btn-deletar" onclick="deletarUsuario(' + u.id + ')">Deletar</button>' +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        function editarUsuario(id) {
+            const usuarios = getDados(STORAGE_USUARIO);
+            const usuario = usuarios.find(u => u.id === id);
+            if (!usuario) return;
+
+            usuarioEditando = id;
+            document.getElementById('edit-nome').value = usuario.nome;
+            document.getElementById('edit-creditos').value = usuario.creditos;
+            document.getElementById('modal-editar').classList.add('active');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-editar').classList.remove('active');
+            usuarioEditando = null;
+        }
+
+        function salvarEdicao() {
+            if (!usuarioEditando) return;
+
+            const usuarios = getDados(STORAGE_USUARIO);
+            const idx = usuarios.findIndex(u => u.id === usuarioEditando);
+            if (idx === -1) return;
+
+            usuarios[idx].nome = document.getElementById('edit-nome').value.trim();
+            usuarios[idx].creditos = parseInt(document.getElementById('edit-creditos').value);
+            salvarDados(STORAGE_USUARIO, usuarios);
+
+            fecharModal();
+            carregarDados();
+            alert('✅ Usuário atualizado com sucesso!');
+        }
+
+        function deletarUsuario(id) {
+            if (!confirm('Tem certeza que deseja deletar este usuário? Todos os vídeos associados também serão removidos.')) return;
+
+            let usuarios = getDados(STORAGE_USUARIO);
+            let videos = getDados(STORAGE_VIDEOS);
+            let assinaturas = getDados(STORAGE_ASSINATURAS);
+
+            // Remover usuário
+            usuarios = usuarios.filter(u => u.id !== id);
+            // Remover vídeos do usuário
+            videos = videos.filter(v => v.criadorId !== id);
+            // Remover assinaturas do usuário
+            assinaturas = assinaturas.filter(a => {
+                const video = videos.find(v => v.id === a.videoId);
+                return video && video.criadorId !== id;
+            });
+
+            salvarDados(STORAGE_USUARIO, usuarios);
+            salvarDados(STORAGE_VIDEOS, videos);
+            salvarDados(STORAGE_ASSINATURAS, assinaturas);
+
+            carregarDados();
+            alert('✅ Usuário e dados associados removidos com sucesso!');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!verificarAuth()) return;
+            carregarDados();
+        });
+    </script>
+</body>
+</html>

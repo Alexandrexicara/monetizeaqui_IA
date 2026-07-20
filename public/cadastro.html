@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Vídeo | Kawi</title>
+    <style>
+        :root { --cinza-escuro: #1A1D23; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; }
+        header { background: var(--cinza-medio); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--laranja); }
+        header h1 { color: var(--verde-fluo); font-size: 1.5rem; }
+        .btn { padding: 0.7rem 1.2rem; border-radius: var(--borda); text-decoration: none; font-weight: 600; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-voltar { background: var(--cinza-claro); color: white; }
+        .aviso-gratis { background: rgba(0,255,148,0.1); border: 1px solid var(--verde-fluo); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; color: var(--verde-fluo); font-weight: 500; }
+        .container { max-width: 650px; margin: 3rem auto; padding: 0 5%; }
+        .form-box { background: var(--cinza-medio); padding: 2.5rem; border-radius: var(--borda); border-left: 4px solid var(--laranja); }
+        .form-box h2 { color: var(--verde-fluo); margin-bottom: 1.5rem; }
+        .campo { margin-bottom: 1.5rem; }
+        .campo label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: white; }
+        .campo input { width: 100%; padding: 0.9rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; font-size: 1rem; }
+        .campo input:focus { outline: none; border-color: var(--azul); }
+        button[type="submit"] { width: 100%; padding: 1rem; background: var(--verde-fluo); color: #1A1D23; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; }
+        button[type="submit"]:hover { background: #7DFFC2; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>➕ Novo Vídeo</h1>
+        <div style="display:flex; gap:1rem; align-items:center;">
+            <a href="dashboard.html" class="btn btn-azul">📊 Dashboard</a>
+            <a href="index.html" class="btn btn-voltar">← Voltar</a>
+        </div>
+    </header>
+    <main class="container">
+        <div class="form-box">
+            <div class="aviso-gratis">��� AO CADASTRAR, VOCÊ GANHA AUTOMATICAMENTE: <strong>1.000 VISUALIZAÇÕES GRÁTIS!</strong></div>
+            <h2>Cadastre seu vídeo</h2>
+            <form id="formCadastro">
+                <div class="campo">
+                    <label>Título do vídeo</label>
+                    <input type="text" id="titulo" required placeholder="Ex: Meu vídeo no TikTok">
+                </div>
+                <div class="campo">
+                    <label>Link completo do vídeo</label>
+                    <input type="url" id="link" required placeholder="https://www.tiktok.com/@...">
+                </div>
+                <button type="submit">Cadastrar e receber 1.000 grátis</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        const STORAGE_VIDEOS = 'kawi_videos';
+        const STORAGE_USUARIO = 'kawi_usuario';
+        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
+        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
+        function getUsuario() {
+            let u = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
+            if (!u) { u = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random()*9999), creditos: 0 }; localStorage.setItem(STORAGE_USUARIO, JSON.stringify(u)); }
+            return u;
+        }
+        document.getElementById('formCadastro').addEventListener('submit', e => {
+            e.preventDefault();
+            const usuario = getUsuario();
+            const videos = getDados(STORAGE_VIDEOS);
+            // ��� AQUI É O SISTEMA DE 1.000 GRÁTIS AUTOMÁTICO
+            const novoVideo = { 
+                id: Date.now(), 
+                criadorId: usuario.id, 
+                nomeCriador: usuario.nome, 
+                titulo: document.getElementById('titulo').value.trim(), 
+                link: document.getElementById('link').value.trim(), 
+                visualizacoes: 1000, // JÁ COMEÇA COM 1.000
+                visualizacoesAutomaticas: 1000, // CONTROLE DO BÔNUS GRÁTIS
+                temPlano: false,
+                bonusGratisAtivo: true
+            };
+            videos.push(novoVideo);
+            salvarDados(STORAGE_VIDEOS, videos);
+            alert('✅ Vídeo cadastrado com sucesso! ��� Você ganhou 1.000 visualizações automáticas grátis!');
+            window.location.href = 'planos.html?video=' + novoVideo.id;
+        });
+    </script>
+</body>
+</html>

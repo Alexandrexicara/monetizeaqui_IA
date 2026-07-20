@@ -1,0 +1,14 @@
+{
+  "name": "sistema-kawi",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Build concluido'",
+    "deploy": "netlify deploy",
+    "prod": "netlify deploy --prod"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.30.0"
+  }
+}
