@@ -23,6 +23,7 @@
         button[type="submit"] { width: 100%; padding: 1rem; background: var(--verde-fluo); color: #1A1D23; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; }
         button[type="submit"]:hover { background: #7DFFC2; }
     </style>
+    <script src="js/api.js"></script>
 </head>
 <body>
     <header>
@@ -50,35 +51,37 @@
         </div>
     </main>
     <script>
-        const STORAGE_VIDEOS = 'kawi_videos';
         const STORAGE_USUARIO = 'kawi_usuario';
-        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
-        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
+        
         function getUsuario() {
             let u = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
             if (!u) { u = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random()*9999), creditos: 0 }; localStorage.setItem(STORAGE_USUARIO, JSON.stringify(u)); }
             return u;
         }
-        document.getElementById('formCadastro').addEventListener('submit', e => {
+        
+        document.getElementById('formCadastro').addEventListener('submit', async e => {
             e.preventDefault();
             const usuario = getUsuario();
-            const videos = getDados(STORAGE_VIDEOS);
-            // ��� AQUI É O SISTEMA DE 1.000 GRÁTIS AUTOMÁTICO
-            const novoVideo = { 
-                id: Date.now(), 
-                criadorId: usuario.id, 
-                nomeCriador: usuario.nome, 
-                titulo: document.getElementById('titulo').value.trim(), 
-                link: document.getElementById('link').value.trim(), 
-                visualizacoes: 1000, // JÁ COMEÇA COM 1.000
-                visualizacoesAutomaticas: 1000, // CONTROLE DO BÔNUS GRÁTIS
-                temPlano: false,
-                bonusGratisAtivo: true
-            };
-            videos.push(novoVideo);
-            salvarDados(STORAGE_VIDEOS, videos);
-            alert('✅ Vídeo cadastrado com sucesso! ��� Você ganhou 1.000 visualizações automáticas grátis!');
-            window.location.href = 'planos.html?video=' + novoVideo.id;
+            const titulo = document.getElementById('titulo').value.trim();
+            const link = document.getElementById('link').value.trim();
+            
+            try {
+                const novoVideo = await api.criarVideo(
+                    usuario.id,
+                    usuario.nome,
+                    titulo,
+                    link,
+                    1000,
+                    1000,
+                    true
+                );
+                
+                alert('✅ Vídeo cadastrado com sucesso! 🎉 Você ganhou 1.000 visualizações automáticas grátis!');
+                window.location.href = 'planos.html?video=' + novoVideo.id;
+            } catch (error) {
+                console.error('Erro ao cadastrar vídeo:', error);
+                alert('❌ Erro ao cadastrar vídeo. Tente novamente.');
+            }
         });
     </script>
 </body>

@@ -27,7 +27,7 @@
         <form id="formLogin">
             <div class="campo">
                 <label>Usuário</label>
-                <input type="text" id="usuario" required placeholder="admin">
+                <input type="text" id="usuario" required placeholder="admin@sistema.com">
             </div>
             <div class="campo">
                 <label>Senha</label>
@@ -46,7 +46,7 @@
             const usuario = document.getElementById('usuario').value.trim();
             const senha = document.getElementById('senha').value.trim();
             // Credenciais padrão (em produção, usar backend real)
-            if (usuario === 'admin' && senha === 'admin123') {
+            if (usuario === 'admin@sistema.com' && senha === 'celio48') {
                 const session = { logado: true, usuario: usuario, timestamp: Date.now() };
                 localStorage.setItem(STORAGE_ADMIN, JSON.stringify(session));
                 window.location.href = 'admin-dashboard.html';

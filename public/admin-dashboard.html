@@ -37,6 +37,7 @@
         .modal-buttons { display: flex; gap: 1rem; margin-top: 1.5rem; }
         .btn-cancelar { background: var(--cinza-claro); color: white; }
     </style>
+    <script src="js/api.js"></script>
 </head>
 <body>
     <header>
@@ -77,6 +78,23 @@
                 <tbody id="lista-usuarios"></tbody>
             </table>
         </div>
+        <div class="tabela-container" style="margin-top: 2rem;">
+            <h2>🔗 Meus Links (Distribuição Automática)</h2>
+            <button class="btn btn-editar" style="margin-bottom: 1rem;" onclick="abrirModalLink()">+ Adicionar Link</button>
+            <table id="tabela-links">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Link</th>
+                        <th>Visualizações</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-links"></tbody>
+            </table>
+        </div>
     </main>
     <div class="modal" id="modal-editar">
         <div class="modal-content">
@@ -97,9 +115,6 @@
     </div>
     <script>
         const STORAGE_ADMIN = 'kawi_admin_session';
-        const STORAGE_USUARIO = 'kawi_usuario';
-        const STORAGE_VIDEOS = 'kawi_videos';
-        const STORAGE_ASSINATURAS = 'kawi_assinaturas';
         let usuarioEditando = null;
 
         function verificarAuth() {
@@ -116,57 +131,58 @@
             window.location.href = 'admin-login.html';
         }
 
-        function getDados(chave) {
-            return JSON.parse(localStorage.getItem(chave) || '[]');
-        }
+        async function carregarDados() {
+            try {
+                const usuarios = await api.getUsuarios();
+                const videos = await api.getVideos();
+                const assinaturas = await api.getAssinaturas();
 
-        function salvarDados(chave, dados) {
-            localStorage.setItem(chave, JSON.stringify(dados));
-        }
+                // Estatísticas
+                document.getElementById('stat-usuarios').textContent = usuarios.length;
+                document.getElementById('stat-videos').textContent = videos.length;
+                const totalViews = videos.reduce((sum, v) => sum + (v.visualizacoes || 0), 0);
+                document.getElementById('stat-views').textContent = totalViews.toLocaleString();
+                document.getElementById('stat-assinaturas').textContent = assinaturas.length;
 
-        function carregarDados() {
-            const usuarios = getDados(STORAGE_USUARIO);
-            const videos = getDados(STORAGE_VIDEOS);
-            const assinaturas = getDados(STORAGE_ASSINATURAS);
+                // Tabela de usuários
+                const tbody = document.getElementById('lista-usuarios');
+                if (usuarios.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhum usuário cadastrado</td></tr>';
+                    return;
+                }
 
-            // Estatísticas
-            document.getElementById('stat-usuarios').textContent = usuarios.length;
-            document.getElementById('stat-videos').textContent = videos.length;
-            const totalViews = videos.reduce((sum, v) => sum + (v.visualizacoes || 0), 0);
-            document.getElementById('stat-views').textContent = totalViews.toLocaleString();
-            document.getElementById('stat-assinaturas').textContent = assinaturas.length;
-
-            // Tabela de usuários
-            const tbody = document.getElementById('lista-usuarios');
-            if (usuarios.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhum usuário cadastrado</td></tr>';
-                return;
+                tbody.innerHTML = usuarios.map(u => {
+                    const videosUsuario = videos.filter(v => v.criador_id === u.id).length;
+                    return '<tr>' +
+                        '<td>' + u.id + '</td>' +
+                        '<td>' + u.nome + '</td>' +
+                        '<td>' + u.creditos + '</td>' +
+                        '<td>' + videosUsuario + '</td>' +
+                        '<td>' +
+                            '<button class="btn btn-editar" onclick="editarUsuario(' + u.id + ')">Editar</button>' +
+                            '<button class="btn btn-deletar" onclick="deletarUsuario(' + u.id + ')">Deletar</button>' +
+                        '</td>' +
+                    '</tr>';
+                }).join('');
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados. Tente novamente.');
             }
-
-            tbody.innerHTML = usuarios.map(u => {
-                const videosUsuario = videos.filter(v => v.criadorId === u.id).length;
-                return '<tr>' +
-                    '<td>' + u.id + '</td>' +
-                    '<td>' + u.nome + '</td>' +
-                    '<td>' + u.creditos + '</td>' +
-                    '<td>' + videosUsuario + '</td>' +
-                    '<td>' +
-                        '<button class="btn btn-editar" onclick="editarUsuario(' + u.id + ')">Editar</button>' +
-                        '<button class="btn btn-deletar" onclick="deletarUsuario(' + u.id + ')">Deletar</button>' +
-                    '</td>' +
-                '</tr>';
-            }).join('');
         }
 
-        function editarUsuario(id) {
-            const usuarios = getDados(STORAGE_USUARIO);
-            const usuario = usuarios.find(u => u.id === id);
-            if (!usuario) return;
+        async function editarUsuario(id) {
+            try {
+                const usuario = await api.getUsuario(id);
+                if (!usuario) return;
 
-            usuarioEditando = id;
-            document.getElementById('edit-nome').value = usuario.nome;
-            document.getElementById('edit-creditos').value = usuario.creditos;
-            document.getElementById('modal-editar').classList.add('active');
+                usuarioEditando = id;
+                document.getElementById('edit-nome').value = usuario.nome;
+                document.getElementById('edit-creditos').value = usuario.creditos;
+                document.getElementById('modal-editar').classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar usuário:', error);
+                alert('Erro ao carregar usuário.');
+            }
         }
 
         function fecharModal() {
@@ -174,45 +190,35 @@
             usuarioEditando = null;
         }
 
-        function salvarEdicao() {
+        async function salvarEdicao() {
             if (!usuarioEditando) return;
 
-            const usuarios = getDados(STORAGE_USUARIO);
-            const idx = usuarios.findIndex(u => u.id === usuarioEditando);
-            if (idx === -1) return;
-
-            usuarios[idx].nome = document.getElementById('edit-nome').value.trim();
-            usuarios[idx].creditos = parseInt(document.getElementById('edit-creditos').value);
-            salvarDados(STORAGE_USUARIO, usuarios);
-
-            fecharModal();
-            carregarDados();
-            alert('✅ Usuário atualizado com sucesso!');
+            try {
+                const nome = document.getElementById('edit-nome').value.trim();
+                const creditos = parseInt(document.getElementById('edit-creditos').value);
+                
+                await api.atualizarUsuario(usuarioEditando, nome, creditos);
+                
+                fecharModal();
+                carregarDados();
+                alert('✅ Usuário atualizado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao atualizar usuário:', error);
+                alert('Erro ao atualizar usuário. Tente novamente.');
+            }
         }
 
-        function deletarUsuario(id) {
+        async function deletarUsuario(id) {
             if (!confirm('Tem certeza que deseja deletar este usuário? Todos os vídeos associados também serão removidos.')) return;
 
-            let usuarios = getDados(STORAGE_USUARIO);
-            let videos = getDados(STORAGE_VIDEOS);
-            let assinaturas = getDados(STORAGE_ASSINATURAS);
-
-            // Remover usuário
-            usuarios = usuarios.filter(u => u.id !== id);
-            // Remover vídeos do usuário
-            videos = videos.filter(v => v.criadorId !== id);
-            // Remover assinaturas do usuário
-            assinaturas = assinaturas.filter(a => {
-                const video = videos.find(v => v.id === a.videoId);
-                return video && video.criadorId !== id;
-            });
-
-            salvarDados(STORAGE_USUARIO, usuarios);
-            salvarDados(STORAGE_VIDEOS, videos);
-            salvarDados(STORAGE_ASSINATURAS, assinaturas);
-
-            carregarDados();
-            alert('✅ Usuário e dados associados removidos com sucesso!');
+            try {
+                await api.deletarUsuario(id);
+                carregarDados();
+                alert('✅ Usuário e dados associados removidos com sucesso!');
+            } catch (error) {
+                console.error('Erro ao deletar usuário:', error);
+                alert('Erro ao deletar usuário. Tente novamente.');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
