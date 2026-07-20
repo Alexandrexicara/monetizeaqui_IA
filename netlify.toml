@@ -1,10 +1,11 @@
 [build]
   publish = "public"
-  command = "npm run build"
+  command = "echo 'Build concluido'"
 
-[dev]
-  port = 3000
-  autoLaunch = false
+[[redirects]]
+  from = "/"
+  to = "/landing.html"
+  status = 302
 
 [[redirects]]
   from = "/api/*"
