@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kawi — Ganhe Visualizações Reais</title>
+    <title>MONETIZEAQUI-IA — Ganhe Visualizações Reais</title>
     <style>
         :root {
             --cinza-escuro: #1A1D23;
@@ -19,47 +19,71 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: var(--cinza-escuro); color: var(--texto-cinza); min-height: 100vh; }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
-        header { padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; top:0; width:100%; background: rgba(26,29,35,0.95); backdrop-filter: blur(8px); z-index:999; }
-        header h1 { color: var(--verde-fluo); font-size: 1.5rem; }
+
+        /* Cabeçalho com espaço para LOGO */
+        header { padding: 1.2rem 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; top:0; width:100%; background: rgba(26,29,35,0.95); backdrop-filter: blur(8px); z-index:999; }       
+        .logo-area { display: flex; align-items: center; gap: 0.8rem; }
+        .logo-img { height: 45px; width: auto; } /* AQUI VOCÊ VAI COLOCAR A IMAGEM DO LOGO */
+        .logo-texto { color: var(--verde-fluo); font-size: 1.5rem; font-weight: 700; }
         .btn { padding: 0.8rem 1.8rem; border: none; border-radius: var(--borda); font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; font-size: 1rem; }
         .btn-principal { background: var(--verde-fluo); color: var(--cinza-escuro); }
         .btn-principal:hover { background: #7DFFC2; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,255,148,0.25); }
         .btn-secundario { background: var(--azul); color: white; }
         .btn-secundario:hover { background: #4080FF; }
-        .hero { padding: 8rem 0 4rem; text-align: center; background: radial-gradient(circle at top, rgba(0,255,148,0.08) 0%, transparent 60%); }
+
+        /* Seção Hero */
+        .hero { padding: 8rem 0 4rem; text-align: center; background: radial-gradient(circle at top, rgba(0,255,148,0.08) 0%, transparent 60%); }   
         .hero h2 { font-size: 2.8rem; color: var(--texto-branco); margin-bottom: 1rem; }
         .hero h2 span { color: var(--verde-fluo); }
         .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; color: var(--texto-cinza); }
         .aviso-gratis { background: rgba(0,255,148,0.1); border: 2px solid var(--verde-fluo); padding: 1rem; border-radius: var(--borda); display: inline-block; margin-bottom: 2rem; font-weight: 600; color: var(--verde-fluo); }
+
+        /* Como Funciona */
         .como-funciona { padding: 4rem 0; background: var(--cinza-medio); }
         .como-funciona h3 { text-align: center; font-size: 2rem; color: var(--verde-fluo); margin-bottom: 3rem; }
         .passos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
         .passo { text-align: center; padding: 2rem; background: var(--cinza-escuro); border-radius: var(--borda); border-top: 3px solid var(--azul); }
         .passo .numero { width: 50px; height: 50px; background: var(--laranja); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem; }
         .passo h4 { color: var(--texto-branco); margin-bottom: 0.8rem; font-size: 1.2rem; }
+
+        /* Benefícios */
         .beneficios { padding: 4rem 0; }
         .beneficios h3 { text-align: center; font-size: 2rem; color: var(--verde-fluo); margin-bottom: 2rem; }
         .lista-beneficios { display: grid; gap: 1.2rem; max-width: 700px; margin: 0 auto; }
         .item { display: flex; align-items: center; gap: 1rem; font-size: 1.1rem; }
         .item span { color: var(--verde-fluo); font-size: 1.5rem; }
+
+        /* Planos Resumo */
         .planos-resumo { padding: 4rem 0; background: var(--cinza-medio); text-align: center; }
         .planos-resumo h3 { font-size: 2rem; color: var(--verde-fluo); margin-bottom: 1rem; }
         .planos-resumo p { margin-bottom: 2rem; font-size: 1.1rem; }
+
+        /* Chamada Final */
         .chamada-final { padding: 4rem 0; text-align: center; }
         .chamada-final h3 { font-size: 2rem; color: var(--texto-branco); margin-bottom: 1rem; }
+
+        /* Rodapé */
         footer { padding: 2rem 0; text-align: center; font-size: 0.9rem; color: #777; border-top: 1px solid var(--cinza-claro); }
+
         @media(max-width: 768px) {
             .hero h2 { font-size: 2rem; }
             .passos { grid-template-columns: 1fr; }
+            .logo-texto { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>��� Kawi Visualizações</h1>
+        <!-- ESPAÇO PRONTO PARA O SEU LOGO -->
+        <div class="logo-area">
+            <!-- COLOQUE A IMAGEM DO LOGO AQUI DEPOIS: <img src="logo.png" alt="MONETIZEAQUI-IA" class="logo-img"> -->
+            <h1 class="logo-texto">MONETIZEAQUI-IA</h1>
+        </div>
         <a href="painel.html" class="btn btn-secundario">Acessar Painel</a>
     </header>
+
     <main>
+        <!-- Seção Principal -->
         <section class="hero">
             <div class="container">
                 <div class="aviso-gratis">��� AO CADASTRAR, GANHE 1.000 VISUALIZAÇÕES GRÁTIS!</div>
@@ -68,6 +92,8 @@
                 <a href="painel.html" class="btn btn-principal">Começar Agora — Grátis</a>
             </div>
         </section>
+
+        <!-- Como Funciona -->
         <section class="como-funciona">
             <div class="container">
                 <h3>��� Como Funciona?</h3>
@@ -75,7 +101,7 @@
                     <div class="passo">
                         <div class="numero">1</div>
                         <h4>Cadastre Seu Vídeo</h4>
-                        <p>Informe o título e o link completo do seu vídeo. Na hora, você já ganha 1.000 visualizações automáticas sem custo.</p>
+                        <p>Informe o título e o link completo do seu vídeo. Na hora, você já ganha 1.000 visualizações automáticas sem custo.</p>   
                     </div>
                     <div class="passo">
                         <div class="numero">2</div>
@@ -95,9 +121,11 @@
                 </div>
             </div>
         </section>
+ 
+        <!-- Benefícios -->
         <section class="beneficios">
             <div class="container">
-                <h3>✅ Por Que Usar o Kawi?</h3>
+                <h3>✅ Por Que Usar o MONETIZEAQUI-IA?</h3>
                 <div class="lista-beneficios">
                     <div class="item"><span>✓</span> 1.000 visualizações grátis para todo vídeo cadastrado</div>
                     <div class="item"><span>✓</span> Visualizações de pessoas reais, não robôs falsos</div>
@@ -108,6 +136,8 @@
                 </div>
             </div>
         </section>
+
+        <!-- Planos -->
         <section class="planos-resumo">
             <div class="container">
                 <h3>��� Planos para Crescer Mais</h3>
@@ -124,6 +154,8 @@
                 </div>
             </div>
         </section>
+
+        <!-- Chamada Final -->
         <section class="chamada-final">
             <div class="container">
                 <h3>Não Perca Tempo — Comece Agora!</h3>
@@ -132,9 +164,10 @@
             </div>
         </section>
     </main>
+
     <footer>
         <div class="container">
-            <p>© 2026 Kawi Visualizações — Todos os direitos reservados.</p>
+            <p>© 2026 MONETIZEAQUI-IA — Todos os direitos reservados.</p>
         </div>
     </footer>
 </body>
