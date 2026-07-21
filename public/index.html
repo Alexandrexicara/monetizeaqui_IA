@@ -3,106 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Kawi ��� — 1.000 Grátis</title>
+    <title>Kawi — Ganhe Visualizações Reais</title>
     <style>
-        :root { --cinza-escuro: #1A1D23; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --texto-cinza: #D1D5DB; --borda: 12px; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --cinza-escuro: #1A1D23;
+            --cinza-medio: #252932;
+            --cinza-claro: #3A3F4B;
+            --azul: #165DFF;
+            --laranja: #FF7D00;
+            --verde-fluo: #00FF94;
+            --texto-branco: #FFFFFF;
+            --texto-cinza: #D1D5DB;
+            --borda: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: var(--cinza-escuro); color: var(--texto-cinza); min-height: 100vh; }
-        header { background: var(--cinza-medio); padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--azul); }
-        header h1 { color: var(--verde-fluo); font-size: 1.7rem; }
-        .saldo { background: var(--cinza-claro); padding: 0.6rem 1.2rem; border-radius: var(--borda); color: var(--laranja); font-weight: 600; }
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: var(--borda); font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: 0.3s; }
-        .btn-laranja { background: var(--laranja); color: white; }
-        .btn-azul { background: var(--azul); color: white; }
-        .btn-verde { background: var(--verde-fluo); color: #1A1D23; }
-        .aviso-bonus { background: rgba(0,255,148,0.1); color: var(--verde-fluo); padding: 0.5rem; border-radius: 6px; font-size: 0.9rem; margin-bottom: 0.5rem; display: inline-block; }
-        .container { max-width: 1280px; margin: 2rem auto; padding: 0 5%; }
-        .grid-videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.8rem; }
-        .card-video { background: var(--cinza-medio); border-radius: var(--borda); padding: 1.5rem; border-top: 3px solid var(--azul); transition: 0.3s; }
-        .card-video:hover { transform: translateY(-5px); border-top-color: var(--verde-fluo); }
-        .card-video.meu-video { border-top-color: var(--laranja); }
-        .card-video h3 { color: var(--verde-fluo); margin-bottom: 0.8rem; }
-        .meta { margin-bottom: 0.5rem; font-size: 0.95rem; }
-        .vazio { text-align: center; padding: 4rem 2rem; color: #888; font-size: 1.2rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
+        header { padding: 1.5rem 5%; display: flex; justify-content: space-between; align-items: center; position: fixed; top:0; width:100%; background: rgba(26,29,35,0.95); backdrop-filter: blur(8px); z-index:999; }
+        header h1 { color: var(--verde-fluo); font-size: 1.5rem; }
+        .btn { padding: 0.8rem 1.8rem; border: none; border-radius: var(--borda); font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.3s; font-size: 1rem; }
+        .btn-principal { background: var(--verde-fluo); color: var(--cinza-escuro); }
+        .btn-principal:hover { background: #7DFFC2; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,255,148,0.25); }
+        .btn-secundario { background: var(--azul); color: white; }
+        .btn-secundario:hover { background: #4080FF; }
+        .hero { padding: 8rem 0 4rem; text-align: center; background: radial-gradient(circle at top, rgba(0,255,148,0.08) 0%, transparent 60%); }
+        .hero h2 { font-size: 2.8rem; color: var(--texto-branco); margin-bottom: 1rem; }
+        .hero h2 span { color: var(--verde-fluo); }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; color: var(--texto-cinza); }
+        .aviso-gratis { background: rgba(0,255,148,0.1); border: 2px solid var(--verde-fluo); padding: 1rem; border-radius: var(--borda); display: inline-block; margin-bottom: 2rem; font-weight: 600; color: var(--verde-fluo); }
+        .como-funciona { padding: 4rem 0; background: var(--cinza-medio); }
+        .como-funciona h3 { text-align: center; font-size: 2rem; color: var(--verde-fluo); margin-bottom: 3rem; }
+        .passos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .passo { text-align: center; padding: 2rem; background: var(--cinza-escuro); border-radius: var(--borda); border-top: 3px solid var(--azul); }
+        .passo .numero { width: 50px; height: 50px; background: var(--laranja); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin: 0 auto 1rem; }
+        .passo h4 { color: var(--texto-branco); margin-bottom: 0.8rem; font-size: 1.2rem; }
+        .beneficios { padding: 4rem 0; }
+        .beneficios h3 { text-align: center; font-size: 2rem; color: var(--verde-fluo); margin-bottom: 2rem; }
+        .lista-beneficios { display: grid; gap: 1.2rem; max-width: 700px; margin: 0 auto; }
+        .item { display: flex; align-items: center; gap: 1rem; font-size: 1.1rem; }
+        .item span { color: var(--verde-fluo); font-size: 1.5rem; }
+        .planos-resumo { padding: 4rem 0; background: var(--cinza-medio); text-align: center; }
+        .planos-resumo h3 { font-size: 2rem; color: var(--verde-fluo); margin-bottom: 1rem; }
+        .planos-resumo p { margin-bottom: 2rem; font-size: 1.1rem; }
+        .chamada-final { padding: 4rem 0; text-align: center; }
+        .chamada-final h3 { font-size: 2rem; color: var(--texto-branco); margin-bottom: 1rem; }
+        footer { padding: 2rem 0; text-align: center; font-size: 0.9rem; color: #777; border-top: 1px solid var(--cinza-claro); }
+        @media(max-width: 768px) {
+            .hero h2 { font-size: 2rem; }
+            .passos { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>��� MONETIZEAQUI-IA — 1.000 Visualizações Grátis</h1>
-        <div style="display:flex; gap:1.5rem; align-items:center;">
-            <p id="saldo-creditos" class="saldo">Seu saldo: 0 créditos</p>
-            <a href="dashboard.html" class="btn btn-verde">📊 Dashboard</a>
-            <a href="cadastro.html" class="btn btn-laranja">+ Cadastrar (ganha 1.000 grátis)</a>
-            <a href="admin-login.html" class="btn btn-azul">🔐 Admin</a>
-        </div>
+        <h1>��� Kawi Visualizações</h1>
+        <a href="painel.html" class="btn btn-secundario">Acessar Painel</a>
     </header>
-    <main class="container">
-        <section id="lista-videos" class="grid-videos">
-            <p class="vazio">Carregando vídeos...</p>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="aviso-gratis">��� AO CADASTRAR, GANHE 1.000 VISUALIZAÇÕES GRÁTIS!</div>
+                <h2>Faça Seu Vídeo <span>Explodir</span> Com Visualizações Reais</h2>
+                <p>Sistema simples e seguro: troque visualizações com outros criadores ou contrate automação para crescer rápido no TikTok, YouTube, Instagram e mais.</p>
+                <a href="painel.html" class="btn btn-principal">Começar Agora — Grátis</a>
+            </div>
+        </section>
+        <section class="como-funciona">
+            <div class="container">
+                <h3>��� Como Funciona?</h3>
+                <div class="passos">
+                    <div class="passo">
+                        <div class="numero">1</div>
+                        <h4>Cadastre Seu Vídeo</h4>
+                        <p>Informe o título e o link completo do seu vídeo. Na hora, você já ganha 1.000 visualizações automáticas sem custo.</p>
+                    </div>
+                    <div class="passo">
+                        <div class="numero">2</div>
+                        <h4>Ganhe Créditos</h4>
+                        <p>Assista vídeos de outros usuários para ganhar créditos. Cada visualização feita = +1 crédito para você.</p>
+                    </div>
+                    <div class="passo">
+                        <div class="numero">3</div>
+                        <h4>Receba Visualizações</h4>
+                        <p>Seus créditos viram visualizações no seu vídeo. Ou contrate um plano para receber automação diária.</p>
+                    </div>
+                    <div class="passo">
+                        <div class="numero">4</div>
+                        <h4>Cresça Suas Redes</h4>
+                        <p>Mais visualizações ajudam seu vídeo a pegar tendência e chegar em mais pessoas reais.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="beneficios">
+            <div class="container">
+                <h3>✅ Por Que Usar o Kawi?</h3>
+                <div class="lista-beneficios">
+                    <div class="item"><span>✓</span> 1.000 visualizações grátis para todo vídeo cadastrado</div>
+                    <div class="item"><span>✓</span> Visualizações de pessoas reais, não robôs falsos</div>
+                    <div class="item"><span>✓</span> Sistema seguro, sem dados pessoais compartilhados</div>
+                    <div class="item"><span>✓</span> Planos de automação para quem quer crescer rápido</div>
+                    <div class="item"><span>✓</span> Funciona com TikTok, YouTube, Instagram, Kwai e outros</div>
+                    <div class="item"><span>✓</span> Acesso direto, sem burocracia</div>
+                </div>
+            </div>
+        </section>
+        <section class="planos-resumo">
+            <div class="container">
+                <h3>��� Planos para Crescer Mais</h3>
+                <p>Além das suas 1.000 visualizações grátis, escolha um plano para receber mais visualizações automáticas por dia:</p>
+                <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:2rem;">
+                    <div style="background:var(--cinza-escuro); padding:1.5rem; border-radius:var(--borda); min-width:220px;">
+                        <h4 style="color:var(--azul);">+1.000/dia</h4>
+                        <p style="font-size:1.8rem; font-weight:bold; color:var(--laranja); margin:0.5rem 0;">R$30/mês</p>
+                    </div>
+                    <div style="background:var(--cinza-escuro); padding:1.5rem; border-radius:var(--borda); min-width:220px; border:2px solid var(--laranja);">
+                        <h4 style="color:var(--laranja);">+5.000/dia</h4>
+                        <p style="font-size:1.8rem; font-weight:bold; color:var(--laranja); margin:0.5rem 0;">R$50/mês</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="chamada-final">
+            <div class="container">
+                <h3>Não Perca Tempo — Comece Agora!</h3>
+                <p style="margin-bottom:2rem;">Cadastre seu vídeo e receba suas 1.000 visualizações grátis já hoje.</p>
+                <a href="painel.html" class="btn btn-principal">Ir para o Painel</a>
+            </div>
         </section>
     </main>
-    <script>
-        const STORAGE_VIDEOS = 'kawi_videos';
-        const STORAGE_USUARIO = 'kawi_usuario';
-        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
-        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
-        function getUsuario() {
-            let usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
-            if (!usuario) {
-                usuario = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random() * 9999), creditos: 0 };
-                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
-            }
-            return usuario;
-        }
-        // SISTEMA DE VISUALIZAÇÕES AUTOMÁTICAS GRÁTIS
-        function processarVisualizacoesAutomaticas() {
-            let videos = getDados(STORAGE_VIDEOS);
-            let alterou = false;
-            videos.forEach(v => {
-                if (v.bonusGratisAtivo && v.visualizacoesAutomaticas > 0) {
-                    const adicionar = Math.min(50, v.visualizacoesAutomaticas);
-                    v.visualizacoes += adicionar;
-                    v.visualizacoesAutomaticas -= adicionar;
-                    alterou = true;
-                }
-            });
-            if (alterou) salvarDados(STORAGE_VIDEOS, videos);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            processarVisualizacoesAutomaticas(); // Roda automaticamente ao abrir
-            const usuario = getUsuario();
-            const videos = getDados(STORAGE_VIDEOS);
-            const listaEl = document.getElementById('lista-videos');
-            document.getElementById('saldo-creditos').textContent = 'Seu saldo: ' + usuario.creditos + ' créditos';
-            if (videos.length === 0) {
-                listaEl.innerHTML = '<p class="vazio">Nenhum vídeo cadastrado ainda. Cadastre o seu e ganhe 1.000 visualizações grátis!</p>';
-                return;
-            }
-            listaEl.innerHTML = videos.map(video => {
-                const ehMeu = video.criadorId === usuario.id;
-                return '<div class="card-video ' + (ehMeu ? 'meu-video' : '') + '">' +
-                    (video.bonusGratisAtivo ? '<span class="aviso-bonus">��� BÔNUS GRÁTIS ATIVO</span><br>' : '') +
-                    '<h3>' + video.titulo + '</h3>' +
-                    '<p class="meta">��� Criador: ' + video.nomeCriador + '</p>' +
-                    '<p class="meta">��� Total de visualizações: ' + (video.visualizacoes || 0) + '</p>' +
-                    (ehMeu ? 
-                        '<a href="planos.html?video=' + video.id + '" class="btn btn-azul" style="margin-top:1rem;">Contratar Plano Maior</a>' :
-                        '<button class="btn btn-verde" style="margin-top:1rem;" onclick="assistirVideo(' + video.id + ')">���️ Assistir e Ganhar +1 Crédito</button>'
-                    ) + '</div>';
-            }).join('');
-        });
-        function assistirVideo(videoId) {
-            let videos = getDados(STORAGE_VIDEOS);
-            let usuario = getUsuario();
-            const idx = videos.findIndex(v => v.id === videoId);
-            if (idx === -1) return;
-            videos[idx].visualizacoes += 1;
-            usuario.creditos += 1;
-            salvarDados(STORAGE_VIDEOS, videos);
-            localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
-            alert('✅ Feito! Ganhou +1 crédito. Total: ' + usuario.creditos);
-            window.location.reload();
-        }
-    </script>
+    <footer>
+        <div class="container">
+            <p>© 2026 Kawi Visualizações — Todos os direitos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
