@@ -74,7 +74,7 @@ exports.handler = async (event, context) => {
     if (httpMethod === 'DELETE') {
       const id = event.queryStringParameters?.id;
       
-      const result = await pool.query('DELETE FROM usuarios WHERE id = $3 RETURNING *', [id]);
+      const result = await pool.query('DELETE FROM usuarios WHERE id = $1 RETURNING *', [id]);
       
       if (result.rows.length === 0) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Usuário não encontrado' }) };

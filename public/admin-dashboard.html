@@ -116,9 +116,27 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="modal-link">
+        <div class="modal-content">
+            <h2 id="modal-link-title">Adicionar Link</h2>
+            <div class="campo">
+                <label>Título</label>
+                <input type="text" id="link-titulo">
+            </div>
+            <div class="campo">
+                <label>Link</label>
+                <input type="url" id="link-url">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancelar" onclick="fecharModalLink()">Cancelar</button>
+                <button class="btn btn-editar" onclick="salvarLink()">Salvar</button>
+            </div>
+        </div>
+    </div>
     <script>
         const STORAGE_ADMIN = 'kawi_admin_session';
         let usuarioEditando = null;
+        let linkEditando = null;
 
         function verificarAuth() {
             const session = JSON.parse(localStorage.getItem(STORAGE_ADMIN) || 'null');
@@ -139,6 +157,7 @@
                 const usuarios = await api.getUsuarios();
                 const videos = await api.getVideos();
                 const assinaturas = await api.getAssinaturas();
+                const adminLinks = await api.getAdminLinks();
 
                 // Estatísticas
                 document.getElementById('stat-usuarios').textContent = usuarios.length;
@@ -151,22 +170,41 @@
                 const tbody = document.getElementById('lista-usuarios');
                 if (usuarios.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhum usuário cadastrado</td></tr>';
-                    return;
+                } else {
+                    tbody.innerHTML = usuarios.map(u => {
+                        const videosUsuario = videos.filter(v => v.criador_id === u.id).length;
+                        return '<tr>' +
+                            '<td>' + u.id + '</td>' +
+                            '<td>' + u.nome + '</td>' +
+                            '<td>' + u.creditos + '</td>' +
+                            '<td>' + videosUsuario + '</td>' +
+                            '<td>' +
+                                '<button class="btn btn-editar" onclick="editarUsuario(' + u.id + ')">Editar</button>' +
+                                '<button class="btn btn-deletar" onclick="deletarUsuario(' + u.id + ')">Deletar</button>' +
+                            '</td>' +
+                        '</tr>';
+                    }).join('');
                 }
 
-                tbody.innerHTML = usuarios.map(u => {
-                    const videosUsuario = videos.filter(v => v.criador_id === u.id).length;
-                    return '<tr>' +
-                        '<td>' + u.id + '</td>' +
-                        '<td>' + u.nome + '</td>' +
-                        '<td>' + u.creditos + '</td>' +
-                        '<td>' + videosUsuario + '</td>' +
-                        '<td>' +
-                            '<button class="btn btn-editar" onclick="editarUsuario(' + u.id + ')">Editar</button>' +
-                            '<button class="btn btn-deletar" onclick="deletarUsuario(' + u.id + ')">Deletar</button>' +
-                        '</td>' +
-                    '</tr>';
-                }).join('');
+                // Tabela de links do admin
+                const tbodyLinks = document.getElementById('lista-links');
+                if (adminLinks.length === 0) {
+                    tbodyLinks.innerHTML = '<tr><td colspan="6" class="vazio">Nenhum link cadastrado</td></tr>';
+                } else {
+                    tbodyLinks.innerHTML = adminLinks.map(l => {
+                        return '<tr>' +
+                            '<td>' + l.id + '</td>' +
+                            '<td>' + l.titulo + '</td>' +
+                            '<td><a href="' + l.link + '" target="_blank" style="color:var(--azul);">' + l.link.substring(0, 30) + '...</a></td>' +
+                            '<td>' + (l.visualizacoes_totais || 0) + '</td>' +
+                            '<td>' + (l.ativo ? '<span style="color:var(--verde-fluo);">Ativo</span>' : '<span style="color:var(--laranja);">Inativo</span>') + '</td>' +
+                            '<td>' +
+                                '<button class="btn btn-editar" onclick="editarLink(' + l.id + ')">Editar</button>' +
+                                '<button class="btn btn-deletar" onclick="deletarLink(' + l.id + ')">Deletar</button>' +
+                            '</td>' +
+                        '</tr>';
+                    }).join('');
+                }
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
                 alert('Erro ao carregar dados. Tente novamente.');
@@ -221,6 +259,73 @@
             } catch (error) {
                 console.error('Erro ao deletar usuário:', error);
                 alert('Erro ao deletar usuário. Tente novamente.');
+            }
+        }
+
+        // Funções para gerenciar links do admin
+        function abrirModalLink() {
+            linkEditando = null;
+            document.getElementById('modal-link-title').textContent = 'Adicionar Link';
+            document.getElementById('link-titulo').value = '';
+            document.getElementById('link-url').value = '';
+            document.getElementById('modal-link').classList.add('active');
+        }
+
+        function fecharModalLink() {
+            document.getElementById('modal-link').classList.remove('active');
+            linkEditando = null;
+        }
+
+        async function salvarLink() {
+            const titulo = document.getElementById('link-titulo').value.trim();
+            const link = document.getElementById('link-url').value.trim();
+
+            if (!titulo || !link) {
+                alert('Título e link são obrigatórios!');
+                return;
+            }
+
+            try {
+                if (linkEditando) {
+                    await api.atualizarAdminLink(linkEditando, titulo, link, true);
+                } else {
+                    await api.criarAdminLink(titulo, link);
+                }
+                fecharModalLink();
+                carregarDados();
+                alert('✅ Link salvo com sucesso!');
+            } catch (error) {
+                console.error('Erro ao salvar link:', error);
+                alert('Erro ao salvar link. Tente novamente.');
+            }
+        }
+
+        async function editarLink(id) {
+            try {
+                const link = await api.getAdminLink(id);
+                if (!link) return;
+
+                linkEditando = id;
+                document.getElementById('modal-link-title').textContent = 'Editar Link';
+                document.getElementById('link-titulo').value = link.titulo;
+                document.getElementById('link-url').value = link.link;
+                document.getElementById('modal-link').classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar link:', error);
+                alert('Erro ao carregar link.');
+            }
+        }
+
+        async function deletarLink(id) {
+            if (!confirm('Tem certeza que deseja deletar este link?')) return;
+
+            try {
+                await api.deletarAdminLink(id);
+                carregarDados();
+                alert('✅ Link removido com sucesso!');
+            } catch (error) {
+                console.error('Erro ao deletar link:', error);
+                alert('Erro ao deletar link. Tente novamente.');
             }
         }
 

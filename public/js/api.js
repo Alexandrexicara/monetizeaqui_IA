@@ -33,14 +33,13 @@ class KawiAPI {
 
         if (endpoint.includes('usuarios')) {
             if (options.method === 'GET') {
-                const usuarios = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || '[]');
-                return Promise.resolve(usuarios);
+                const usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
+                if (!usuario) return Promise.resolve([]);
+                return Promise.resolve([usuario]);
             }
             if (options.method === 'POST') {
                 const data = JSON.parse(options.body);
-                const usuarios = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || '[]');
-                usuarios.push(data);
-                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuarios));
+                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(data));
                 return Promise.resolve(data);
             }
         }
@@ -180,6 +179,35 @@ class KawiAPI {
     async processarAutomatico() {
         return this.request('/processar-automatico', {
             method: 'POST'
+        });
+    }
+
+    // Admin Links
+    async getAdminLinks() {
+        return this.request('/admin-links');
+    }
+
+    async getAdminLink(id) {
+        return this.request(`/admin-links?id=${id}`);
+    }
+
+    async criarAdminLink(titulo, link) {
+        return this.request('/admin-links', {
+            method: 'POST',
+            body: JSON.stringify({ titulo, link })
+        });
+    }
+
+    async atualizarAdminLink(id, titulo, link, ativo) {
+        return this.request(`/admin-links?id=${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ titulo, link, ativo })
+        });
+    }
+
+    async deletarAdminLink(id) {
+        return this.request(`/admin-links?id=${id}`, {
+            method: 'DELETE'
         });
     }
 }
