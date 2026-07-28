@@ -1,15 +1,17 @@
 exports.handler = async (event) => {
   try {
-    // SEU CODIGO ORIGINAL AQUI
-  } catch (erro) {
-    console.error("ERRO:", erro);
+    // SEU CÓDIGO ORIGINAL AQUI
+  } catch (error) {
+    console.error("ERRO COMPLETO:", error);
+    console.error(error.stack);
+
     return {
       statusCode: 500,
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         sucesso: false,
-        mensagem: erro.message || "Erro interno",
-        detalhes: erro.stack || ""
+        erro: error.message,
+        stack: error.stack
       })
     };
   }
