@@ -70,7 +70,8 @@
                 // Buscar usuários para verificar login
                 const res = await api.getUsuarios();
 const usuarios = res.usuarios || [];
-                const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+                if (!Array.isArray(usuarios)) throw new Error("Sem usuários");
+const usuario = usuarios.find(u => u.email === email && u.senha === senha);
                 
                 if (!usuario) {
                     alert('❌ Email ou senha incorretos!');
