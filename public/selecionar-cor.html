@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecione a Cor de Fundo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #000; color: #fff; padding: 2rem; }
+        h1 { text-align: center; margin-bottom: 2rem; color: #00FF94; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .cor-box { padding: 2rem; border-radius: 12px; cursor: pointer; transition: transform 0.3s; border: 2px solid transparent; }
+        .cor-box:hover { transform: scale(1.05); border-color: #00FF94; }
+        .cor-box h3 { margin-bottom: 0.5rem; font-size: 1.2rem; }
+        .cor-box p { font-size: 0.9rem; opacity: 0.8; }
+        .atual { border: 3px solid #FF7D00; }
+    </style>
+</head>
+<body>
+    <h1>🎨 Escolha a Cor de Fundo</h1>
+    <div class="container">
+        <div class="opcoes">
+            <div class="cor-box atual" style="background: #1A1D23;" onclick="alert('Esta é a cor atual!')">
+                <h3>Atual (Muito Escuro)</h3>
+                <p>#1A1D23 - Cinza muito escuro (quase preto)</p>
+            </div>
+            <div class="cor-box" style="background: #2D2D35;" onclick="alert('Você escolheu: #2D2D35')">
+                <h3>Opção 1</h3>
+                <p>#2D2D35 - Cinza escuro suave</p>
+            </div>
+            <div class="cor-box" style="background: #353540;" onclick="alert('Você escolheu: #353540')">
+                <h3>Opção 2</h3>
+                <p>#353540 - Cinza médio-escuro</p>
+            </div>
+            <div class="cor-box" style="background: #3D3D4A;" onclick="alert('Você escolheu: #3D3D4A')">
+                <h3>Opção 3</h3>
+                <p>#3D3D4A - Cinza médio equilibrado</p>
+            </div>
+            <div class="cor-box" style="background: #454555;" onclick="alert('Você escolheu: #454555')">
+                <h3>Opção 4</h3>
+                <p>#454555 - Cinza médio-claro</p>
+            </div>
+            <div class="cor-box" style="background: #4D4D60;" onclick="alert('Você escolheu: #4D4D60')">
+                <h3>Opção 5</h3>
+                <p>#4D4D60 - Cinza claro suave</p>
+            </div>
+            <div class="cor-box" style="background: #55556B;" onclick="alert('Você escolheu: #55556B')">
+                <h3>Opção 6</h3>
+                <p>#55556B - Cinza claro (recomendado)</p>
+            </div>
+            <div class="cor-box" style="background: #5D5D76;" onclick="alert('Você escolheu: #5D5D76')">
+                <h3>Opção 7</h3>
+                <p>#5D5D76 - Cinza mais claro</p>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 2rem; color: #888;">Clique na cor desejada e me diga qual escolheu!</p>
+    </div>
+</body>
+</html>
