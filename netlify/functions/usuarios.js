@@ -24,13 +24,19 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log('DATABASE_URL configurada:', !!process.env.DATABASE_URL);
+    console.log('Método HTTP:', event.httpMethod);
+    
     const { httpMethod, path } = event;
 
     // GET - Listar usuários ou buscar usuário específico
     if (httpMethod === 'GET') {
+      console.log('GET request recebido');
       const id = event.queryStringParameters?.id;
+      console.log('ID query param:', id);
       
       if (id) {
+        console.log('Buscando usuário por ID:', id);
         const result = await pool.query('SELECT * FROM usuarios WHERE id = $1', [id]);
         if (result.rows.length === 0) {
           return { statusCode: 404, headers, body: JSON.stringify({ error: 'Usuário não encontrado' }) };
@@ -38,7 +44,9 @@ exports.handler = async (event, context) => {
         return { statusCode: 200, headers, body: JSON.stringify(result.rows[0]) };
       }
       
+      console.log('Listando todos os usuários');
       const result = await pool.query('SELECT * FROM usuarios ORDER BY criado_em DESC');
+      console.log('Usuários encontrados:', result.rows.length);
       return { statusCode: 200, headers, body: JSON.stringify(result.rows) };
     }
 
