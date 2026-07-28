@@ -1,27 +1,27 @@
 exports.handler = async (event) => {
-  try {exports.handler = async (event) => {
   try {
     // SEU CÓDIGO ORIGINAL AQUI
-  } catch (erro) {
-    console.error("ERRO:", erro);
+  } catch (error) {
+    console.error("ERRO COMPLETO:", error);
+    console.error(error.stack);
+
     return {
       statusCode: 500,
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         sucesso: false,
-        mensagem: erro.message || "Erro interno",
-        detalhes: erro.stack || ""
+        erro: error.message,
+        stack: error.stack
       })
     };
   }
 };
-  } catch (error) {
-    console.error("ERRO COMPLETO:", error);
-    console.error(error.stack);
+  } catch (erro) {
+    console.error("ERRO COMPLETO:", erro);
+    console.error(erro.stack);
     return {
       statusCode: 500,
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({sucesso: false, erro: error.message, stack: error.stack})
+      body: JSON.stringify({sucesso: false, mensagem: erro.message, detalhes: erro.stack})
     };
   }
-};
