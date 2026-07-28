@@ -105,7 +105,8 @@
             
             try {
                 // Verificar se email já existe
-                const usuarios = await api.getUsuarios();
+                const res = await api.getUsuarios();
+const usuarios = res.usuarios || [];
                 const emailExiste = usuarios.find(u => u.email === email);
                 
                 if (emailExiste) {
