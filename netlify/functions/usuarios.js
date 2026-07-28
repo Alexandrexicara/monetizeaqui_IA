@@ -1,6 +1,6 @@
 exports.handler = async (event) => {
   try {
-    // SEU CÓDIGO ORIGINAL AQUI
+    // SEU CODIGO ORIGINAL AQUI
   } catch (erro) {
     console.error("ERRO:", erro);
     return {
