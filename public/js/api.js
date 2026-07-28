@@ -32,15 +32,24 @@ class KawiAPI {
         const STORAGE_ASSINATURAS = 'kawi_assinaturas';
 
         if (endpoint.includes('usuarios')) {
+            const STORAGE_USUARIOS_DB = 'kawi_usuarios_db';
+            
             if (options.method === 'GET') {
-                const usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
-                if (!usuario) return Promise.resolve([]);
-                return Promise.resolve([usuario]);
+                const usuarios = JSON.parse(localStorage.getItem(STORAGE_USUARIOS_DB) || '[]');
+                return Promise.resolve(usuarios);
             }
             if (options.method === 'POST') {
                 const data = JSON.parse(options.body);
-                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(data));
-                return Promise.resolve(data);
+                const usuarios = JSON.parse(localStorage.getItem(STORAGE_USUARIOS_DB) || '[]');
+                // Adicionar ID e timestamp
+                const novoUsuario = {
+                    ...data,
+                    id: Date.now(),
+                    criado_em: new Date().toISOString()
+                };
+                usuarios.push(novoUsuario);
+                localStorage.setItem(STORAGE_USUARIOS_DB, JSON.stringify(usuarios));
+                return Promise.resolve(novoUsuario);
             }
         }
 
