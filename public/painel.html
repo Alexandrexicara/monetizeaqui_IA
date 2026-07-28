@@ -26,6 +26,7 @@
         .vazio { text-align: center; padding: 4rem 2rem; color: #888; font-size: 1.2rem; }
     </style>
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/sistema-distribuicao.js"></script>
 </head>
 <body>
@@ -44,18 +45,13 @@
         </section>
     </main>
     <script>
+        // Verificar autenticação
+        const usuario = requerirAutenticacao();
+        if (!usuario) return;
+        
         const STORAGE_VIDEOS = 'kawi_videos';
-        const STORAGE_USUARIO = 'kawi_usuario';
         function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
         function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
-        function getUsuario() {
-            let usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
-            if (!usuario) {
-                usuario = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random() * 9999), creditos: 0 };
-                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
-            }
-            return usuario;
-        }
         // SISTEMA DE VISUALIZAÇÕES AUTOMÁTICAS GRÁTIS
         function processarVisualizacoesAutomaticas() {
             let videos = getDados(STORAGE_VIDEOS);
@@ -72,10 +68,9 @@
         }
         document.addEventListener('DOMContentLoaded', () => {
             processarVisualizacoesAutomaticas(); // Roda automaticamente ao abrir
-            const usuario = getUsuario();
             const videos = getDados(STORAGE_VIDEOS);
             const listaEl = document.getElementById('lista-videos');
-            document.getElementById('saldo-creditos').textContent = 'Seu saldo: ' + usuario.creditos + ' créditos';
+            document.getElementById('saldo-creditos').textContent = 'Seu saldo: ' + (usuario.creditos || 0) + ' créditos';
             if (videos.length === 0) {
                 listaEl.innerHTML = '<p class="vazio">Nenhum vídeo cadastrado ainda. Cadastre o seu e ganhe 1.000 visualizações grátis!</p>';
                 return;
@@ -95,14 +90,11 @@
         });
         function assistirVideo(videoId) {
             let videos = getDados(STORAGE_VIDEOS);
-            let usuario = getUsuario();
             const idx = videos.findIndex(v => v.id === videoId);
             if (idx === -1) return;
             videos[idx].visualizacoes += 1;
-            usuario.creditos += 1;
             salvarDados(STORAGE_VIDEOS, videos);
-            localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
-            alert('✅ Feito! Ganhou +1 crédito. Total: ' + usuario.creditos);
+            alert('✅ Feito! Ganhou +1 crédito.');
             window.location.reload();
         }
     </script>

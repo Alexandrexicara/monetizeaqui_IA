@@ -91,10 +91,10 @@ class KawiAPI {
         return this.request(`/usuarios?id=${id}`);
     }
 
-    async criarUsuario(nome, creditos = 0) {
+    async criarUsuario(nome, email, senha, creditos = 0) {
         return this.request('/usuarios', {
             method: 'POST',
-            body: JSON.stringify({ nome, creditos })
+            body: JSON.stringify({ nome, email, senha, creditos })
         });
     }
 

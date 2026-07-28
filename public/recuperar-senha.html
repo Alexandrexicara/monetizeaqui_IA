@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | MONETIZEAQUI-IA</title>
+    <style>
+        :root { --cinza-escuro: #5D5D76; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .recuperar-box { background: var(--cinza-medio); padding: 3rem; border-radius: var(--borda); border-left: 4px solid var(--laranja); max-width: 450px; width: 90%; }
+        .recuperar-box h1 { color: var(--laranja); margin-bottom: 0.5rem; text-align: center; font-size: 1.8rem; }
+        .recuperar-box p { text-align: center; color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
+        .campo { margin-bottom: 1.5rem; }
+        .campo label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: white; }
+        .campo input { width: 100%; padding: 0.9rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; font-size: 1rem; }
+        .campo input:focus { outline: none; border-color: var(--laranja); }
+        button[type="submit"] { width: 100%; padding: 1rem; background: var(--laranja); color: white; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #ff9a33; }
+        .voltar { text-align: center; margin-top: 1.5rem; }
+        .voltar a { color: var(--azul); text-decoration: none; font-weight: 600; }
+        .voltar a:hover { text-decoration: underline; }
+        .sucesso { background: rgba(0,255,148,0.1); border: 1px solid var(--verde-fluo); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; color: var(--verde-fluo); display: none; }
+        .erro { background: rgba(255,107,107,0.1); border: 1px solid #ff6b6b; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; color: #ff6b6b; display: none; }
+    </style>
+</head>
+<body>
+    <div class="recuperar-box">
+        <div style="text-align:center; margin-bottom:1rem;">
+            <img src="img/logo.png" alt="MONETIZEAQUI-IA" style="height:50px; width:auto;">
+        </div>
+        <h1>🔑 Recuperar Senha</h1>
+        <p>Digite seu email para receber instruções de recuperação</p>
+        
+        <div class="sucesso" id="mensagem-sucesso">
+            ✅ Email enviado! Verifique sua caixa de entrada.
+        </div>
+        
+        <div class="erro" id="mensagem-erro">
+            ❌ Email não encontrado no sistema.
+        </div>
+        
+        <form id="formRecuperar">
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" id="email" required placeholder="seu@email.com">
+            </div>
+            <button type="submit">Enviar Instruções</button>
+        </form>
+        <div class="voltar">
+            <a href="login.html">← Voltar ao Login</a>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script>
+        document.getElementById('formRecuperar').addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            
+            try {
+                // Verificar se email existe
+                const usuarios = await api.getUsuarios();
+                const usuario = usuarios.find(u => u.email === email);
+                
+                document.getElementById('mensagem-sucesso').style.display = 'none';
+                document.getElementById('mensagem-erro').style.display = 'none';
+                
+                if (!usuario) {
+                    document.getElementById('mensagem-erro').style.display = 'block';
+                    return;
+                }
+                
+                // Simular envio de email (em produção, usar sistema real de email)
+                document.getElementById('mensagem-sucesso').style.display = 'block';
+                document.getElementById('formRecuperar').style.display = 'none';
+                
+                // Aqui você implementaria o envio real de email
+                console.log('Email de recuperação enviado para:', email);
+                
+            } catch (error) {
+                console.error('Erro ao recuperar senha:', error);
+                alert('❌ Erro ao processar solicitação. Tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

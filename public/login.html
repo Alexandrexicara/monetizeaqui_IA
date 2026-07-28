@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | MONETIZEAQUI-IA</title>
+    <style>
+        :root { --cinza-escuro: #5D5D76; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .login-box { background: var(--cinza-medio); padding: 3rem; border-radius: var(--borda); border-left: 4px solid var(--azul); max-width: 450px; width: 90%; }
+        .login-box h1 { color: var(--verde-fluo); margin-bottom: 0.5rem; text-align: center; font-size: 1.8rem; }
+        .login-box p { text-align: center; color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
+        .campo { margin-bottom: 1.5rem; }
+        .campo label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: white; }
+        .campo input { width: 100%; padding: 0.9rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; font-size: 1rem; }
+        .campo input:focus { outline: none; border-color: var(--azul); }
+        button[type="submit"] { width: 100%; padding: 1rem; background: var(--azul); color: white; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #4080FF; }
+        .voltar { text-align: center; margin-top: 1.5rem; }
+        .voltar a { color: var(--azul); text-decoration: none; font-weight: 600; }
+        .voltar a:hover { text-decoration: underline; }
+        .registro-link { text-align: center; margin-top: 1rem; color: #888; }
+        .registro-link a { color: var(--verde-fluo); text-decoration: none; font-weight: 600; }
+        .registro-link a:hover { text-decoration: underline; }
+        .esqueci-senha { text-align: center; margin-top: 0.8rem; }
+        .esqueci-senha a { color: var(--laranja); text-decoration: none; font-size: 0.9rem; }
+        .esqueci-senha a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <div style="text-align:center; margin-bottom:1rem;">
+            <img src="img/logo.png" alt="MONETIZEAQUI-IA" style="height:50px; width:auto;">
+        </div>
+        <h1>🔐 Login</h1>
+        <p>Entre na sua conta para continuar</p>
+        <form id="formLogin">
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" id="email" required placeholder="seu@email.com">
+            </div>
+            <div class="campo">
+                <label>Senha</label>
+                <input type="password" id="senha" required placeholder="••••••••">
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <div class="esqueci-senha">
+            <a href="recuperar-senha.html">Esqueci minha senha</a>
+        </div>
+        <div class="registro-link">
+            Não tem conta? <a href="registro.html">Criar Conta</a>
+        </div>
+        <div class="voltar">
+            <a href="index.html">← Voltar ao site</a>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script>
+        const STORAGE_USUARIO = 'kawi_usuario_session';
+
+        document.getElementById('formLogin').addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+            
+            try {
+                // Buscar usuários para verificar login
+                const usuarios = await api.getUsuarios();
+                const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+                
+                if (!usuario) {
+                    alert('❌ Email ou senha incorretos!');
+                    return;
+                }
+                
+                // Salvar sessão
+                const session = { 
+                    logado: true, 
+                    usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email },
+                    timestamp: Date.now() 
+                };
+                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(session));
+                
+                alert('✅ Login realizado com sucesso!');
+                window.location.href = 'painel.html';
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                alert('❌ Erro ao fazer login. Tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

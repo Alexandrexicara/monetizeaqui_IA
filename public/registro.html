@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta | MONETIZEAQUI-IA</title>
+    <style>
+        :root { --cinza-escuro: #5D5D76; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .registro-box { background: var(--cinza-medio); padding: 3rem; border-radius: var(--borda); border-left: 4px solid var(--verde-fluo); max-width: 500px; width: 90%; }
+        .registro-box h1 { color: var(--verde-fluo); margin-bottom: 0.5rem; text-align: center; font-size: 1.8rem; }
+        .registro-box p { text-align: center; color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
+        .campo { margin-bottom: 1.5rem; }
+        .campo label { display: block; margin-bottom: 0.6rem; font-weight: 600; color: white; }
+        .campo input { width: 100%; padding: 0.9rem; background: var(--cinza-escuro); border: 2px solid var(--cinza-claro); border-radius: var(--borda); color: white; font-size: 1rem; }
+        .campo input:focus { outline: none; border-color: var(--azul); }
+        .erro { color: #ff6b6b; font-size: 0.85rem; margin-top: 0.3rem; display: none; }
+        button[type="submit"] { width: 100%; padding: 1rem; background: var(--verde-fluo); color: #1A1D23; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #7DFFC2; }
+        .voltar { text-align: center; margin-top: 1.5rem; }
+        .voltar a { color: var(--azul); text-decoration: none; font-weight: 600; }
+        .voltar a:hover { text-decoration: underline; }
+        .login-link { text-align: center; margin-top: 1rem; color: #888; }
+        .login-link a { color: var(--verde-fluo); text-decoration: none; font-weight: 600; }
+        .login-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="registro-box">
+        <div style="text-align:center; margin-bottom:1rem;">
+            <img src="img/logo.png" alt="MONETIZEAQUI-IA" style="height:50px; width:auto;">
+        </div>
+        <h1>📝 Criar Conta</h1>
+        <p>Cadastre-se para começar a ganhar visualizações!</p>
+        <form id="formRegistro">
+            <div class="campo">
+                <label>Nome Completo</label>
+                <input type="text" id="nome" required placeholder="Seu nome completo">
+                <div class="erro" id="erro-nome">Nome é obrigatório</div>
+            </div>
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" id="email" required placeholder="seu@email.com">
+                <div class="erro" id="erro-email">Email inválido</div>
+            </div>
+            <div class="campo">
+                <label>Senha</label>
+                <input type="password" id="senha" required placeholder="Mínimo 6 caracteres" minlength="6">
+                <div class="erro" id="erro-senha">Senha deve ter no mínimo 6 caracteres</div>
+            </div>
+            <div class="campo">
+                <label>Confirmar Senha</label>
+                <input type="password" id="confirmar-senha" required placeholder="Digite a senha novamente">
+                <div class="erro" id="erro-confirmar">As senhas não coincidem</div>
+            </div>
+            <button type="submit">Criar Conta</button>
+        </form>
+        <div class="login-link">
+            Já tem conta? <a href="login.html">Fazer Login</a>
+        </div>
+        <div class="voltar">
+            <a href="index.html">← Voltar ao site</a>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script>
+        const STORAGE_USUARIO = 'kawi_usuario_session';
+
+        document.getElementById('formRegistro').addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            // Limpar erros
+            document.querySelectorAll('.erro').forEach(el => el.style.display = 'none');
+            
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmar-senha').value;
+            
+            // Validações
+            let temErro = false;
+            
+            if (nome.length < 3) {
+                document.getElementById('erro-nome').style.display = 'block';
+                temErro = true;
+            }
+            
+            if (!email.includes('@') || !email.includes('.')) {
+                document.getElementById('erro-email').style.display = 'block';
+                temErro = true;
+            }
+            
+            if (senha.length < 6) {
+                document.getElementById('erro-senha').style.display = 'block';
+                temErro = true;
+            }
+            
+            if (senha !== confirmarSenha) {
+                document.getElementById('erro-confirmar').style.display = 'block';
+                temErro = true;
+            }
+            
+            if (temErro) return;
+            
+            try {
+                // Verificar se email já existe
+                const usuarios = await api.getUsuarios();
+                const emailExiste = usuarios.find(u => u.email === email);
+                
+                if (emailExiste) {
+                    alert('❌ Este email já está cadastrado! Use outro email ou faça login.');
+                    return;
+                }
+                
+                // Criar usuário
+                const novoUsuario = await api.criarUsuario(nome, email, senha);
+                
+                // Salvar sessão
+                const session = { 
+                    logado: true, 
+                    usuario: { id: novoUsuario.id, nome: novoUsuario.nome, email: novoUsuario.email },
+                    timestamp: Date.now() 
+                };
+                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(session));
+                
+                alert('✅ Conta criada com sucesso! Você já ganhou 1.000 visualizações grátis!');
+                window.location.href = 'painel.html';
+            } catch (error) {
+                console.error('Erro ao criar conta:', error);
+                alert('❌ Erro ao criar conta. Tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

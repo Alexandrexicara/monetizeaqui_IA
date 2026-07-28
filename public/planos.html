@@ -55,7 +55,12 @@
             </div>
         </div>
     </main>
+    <script src="js/auth.js"></script>
     <script>
+        // Verificar autenticação
+        const usuario = requerirAutenticacao();
+        if (!usuario) return;
+        
         const STORAGE_ASSINATURAS = 'kawi_assinaturas';
         const STORAGE_VIDEOS = 'kawi_videos';
         function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }

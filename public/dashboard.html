@@ -34,6 +34,7 @@
         .atualizacao { text-align: center; color: var(--verde-fluo); font-size: 0.9rem; margin-bottom: 1rem; }
     </style>
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </head>
 <body>
     <header>
@@ -72,17 +73,11 @@
         </section>
     </main>
     <script>
-        const STORAGE_USUARIO = 'kawi_usuario';
+        // Verificar autenticação
+        const usuario = requerirAutenticacao();
+        if (!usuario) return;
+        
         let tempoAtualizacao = 30;
-
-        function getUsuario() {
-            let usuario = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
-            if (!usuario) {
-                usuario = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random() * 9999), creditos: 0 };
-                localStorage.setItem(STORAGE_USUARIO, JSON.stringify(usuario));
-            }
-            return usuario;
-        }
 
         async function processarVisualizacoesAutomaticas() {
             try {
@@ -95,7 +90,6 @@
         }
 
         async function carregarDashboard() {
-            const usuario = getUsuario();
             const listaEl = document.getElementById('lista-videos');
 
             try {
@@ -106,7 +100,7 @@
                 document.getElementById('stat-videos').textContent = meusVideos.length;
                 document.getElementById('stat-cliques').textContent = meusVideos.reduce((sum, v) => sum + (v.visualizacoes || 0), 0).toLocaleString();
                 document.getElementById('stat-automaticos').textContent = meusVideos.reduce((sum, v) => sum + (v.visualizacoes_automaticas || 0), 0).toLocaleString();
-                document.getElementById('stat-creditos').textContent = usuario.creditos;
+                document.getElementById('stat-creditos').textContent = usuario.creditos || 0;
 
                 if (meusVideos.length === 0) {
                     listaEl.innerHTML = '<p class="vazio">Você ainda não tem vídeos cadastrados. <a href="cadastro.html" style="color: var(--verde-fluo);">Cadastre o primeiro!</a></p>';

@@ -45,11 +45,11 @@ exports.handler = async (event, context) => {
     // POST - Criar novo usuário
     if (httpMethod === 'POST') {
       const data = JSON.parse(event.body);
-      const { nome, creditos = 0 } = data;
+      const { nome, email, senha, creditos = 0 } = data;
       
       const result = await pool.query(
-        'INSERT INTO usuarios (nome, creditos) VALUES ($1, $2) RETURNING *',
-        [nome, creditos]
+        'INSERT INTO usuarios (nome, email, senha, creditos) VALUES ($1, $2, $3, $4) RETURNING *',
+        [nome, email, senha, creditos]
       );
       
       return { statusCode: 201, headers, body: JSON.stringify(result.rows[0]) };

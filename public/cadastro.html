@@ -24,6 +24,7 @@
         button[type="submit"]:hover { background: #7DFFC2; }
     </style>
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </head>
 <body>
     <header>
@@ -54,17 +55,12 @@
         </div>
     </main>
     <script>
-        const STORAGE_USUARIO = 'kawi_usuario';
-        
-        function getUsuario() {
-            let u = JSON.parse(localStorage.getItem(STORAGE_USUARIO) || 'null');
-            if (!u) { u = { id: Date.now(), nome: 'Membro_' + Math.floor(Math.random()*9999), creditos: 0 }; localStorage.setItem(STORAGE_USUARIO, JSON.stringify(u)); }
-            return u;
-        }
+        // Verificar autenticação
+        const usuario = requerirAutenticacao();
+        if (!usuario) return;
         
         document.getElementById('formCadastro').addEventListener('submit', async e => {
             e.preventDefault();
-            const usuario = getUsuario();
             const titulo = document.getElementById('titulo').value.trim();
             const link = document.getElementById('link').value.trim();
             
