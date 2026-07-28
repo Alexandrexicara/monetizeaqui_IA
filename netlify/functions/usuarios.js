@@ -1,8 +1,11 @@
 const { Pool } = require('pg');
 
+// Usa variável de ambiente se disponível, senão usa arquivo local
+const connectionString = process.env.DATABASE_URL || require('../../database-config').DATABASE_URL;
+
 // Configuração do Neon PostgreSQL
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: connectionString,
   ssl: {
     rejectUnauthorized: false
   }
