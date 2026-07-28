@@ -68,7 +68,8 @@
             
             try {
                 // Buscar usuários para verificar login
-                const usuarios = await api.getUsuarios();
+                const res = await api.getUsuarios();
+const usuarios = res.usuarios || [];
                 const usuario = usuarios.find(u => u.email === email && u.senha === senha);
                 
                 if (!usuario) {
