@@ -26,6 +26,21 @@
         .esqueci-senha { text-align: center; margin-top: 0.8rem; }
         .esqueci-senha a { color: var(--laranja); text-decoration: none; font-size: 0.9rem; }
         .esqueci-senha a:hover { text-decoration: underline; }
+
+        @media(max-width: 768px) {
+            .login-box { padding: 2rem; }
+            .login-box h1 { font-size: 1.5rem; }
+            .login-box p { font-size: 0.9rem; }
+            .campo input { padding: 0.8rem; font-size: 0.95rem; }
+            button[type="submit"] { padding: 0.9rem; font-size: 1rem; }
+        }
+
+        @media(max-width: 480px) {
+            body { padding: 1rem; }
+            .login-box { padding: 1.5rem; width: 95%; }
+            .login-box h1 { font-size: 1.3rem; }
+            .campo { margin-bottom: 1.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -37,12 +52,12 @@
         <p>Entre na sua conta para continuar</p>
         <form id="formLogin">
             <div class="campo">
-                <label>Email</label>
-                <input type="email" id="email" required placeholder="seu@email.com">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="email" required placeholder="seu@email.com">
             </div>
             <div class="campo">
-                <label>Senha</label>
-                <input type="password" id="senha" required placeholder="••••••••">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" autocomplete="current-password" required placeholder="••••••••">
             </div>
             <button type="submit">Entrar</button>
         </form>

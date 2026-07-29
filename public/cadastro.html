@@ -22,6 +22,23 @@
         .campo input:focus { outline: none; border-color: var(--azul); }
         button[type="submit"] { width: 100%; padding: 1rem; background: var(--verde-fluo); color: #1A1D23; font-weight: bold; font-size: 1.1rem; border: none; border-radius: var(--borda); cursor: pointer; }
         button[type="submit"]:hover { background: #7DFFC2; }
+
+        @media(max-width: 768px) {
+            header { flex-direction: column; gap: 1rem; text-align: center; }
+            header h1 { font-size: 1.3rem; }
+            .btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
+            .container { margin: 2rem auto; }
+            .form-box { padding: 2rem; }
+            .form-box h2 { font-size: 1.3rem; }
+            .campo input { padding: 0.8rem; font-size: 0.95rem; }
+            button[type="submit"] { padding: 0.9rem; font-size: 1rem; }
+        }
+
+        @media(max-width: 480px) {
+            header { padding: 1rem 5%; }
+            .form-box { padding: 1.5rem; }
+            .aviso-gratis { font-size: 0.9rem; padding: 0.8rem; }
+        }
     </style>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
@@ -43,12 +60,12 @@
             <h2>Cadastre seu vídeo</h2>
             <form id="formCadastro">
                 <div class="campo">
-                    <label>Título do vídeo</label>
-                    <input type="text" id="titulo" required placeholder="Ex: Meu vídeo no TikTok">
+                    <label for="titulo">Título do vídeo</label>
+                    <input type="text" id="titulo" name="titulo" autocomplete="off" required placeholder="Ex: Meu vídeo no TikTok">
                 </div>
                 <div class="campo">
-                    <label>Link completo do vídeo</label>
-                    <input type="url" id="link" required placeholder="https://www.tiktok.com/@...">
+                    <label for="link">Link completo do vídeo</label>
+                    <input type="url" id="link" name="link" autocomplete="url" required placeholder="https://www.tiktok.com/@...">
                 </div>
                 <button type="submit">Cadastrar e receber 1.000 grátis</button>
             </form>

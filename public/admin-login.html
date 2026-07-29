@@ -7,7 +7,7 @@
     <style>
         :root { --cinza-escuro: #5D5D76; --cinza-medio: #252932; --cinza-claro: #3A3F4B; --azul: #165DFF; --laranja: #FF7D00; --verde-fluo: #00FF94; --texto-branco: #FFFFFF; --borda: 12px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        body { background: var(--cinza-escuro); color: #ddd; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
         .login-box { background: var(--cinza-medio); padding: 3rem; border-radius: var(--borda); border-left: 4px solid var(--laranja); max-width: 450px; width: 90%; }
         .login-box h1 { color: var(--verde-fluo); margin-bottom: 2rem; text-align: center; font-size: 1.8rem; }
         .campo { margin-bottom: 1.5rem; }
@@ -19,6 +19,20 @@
         .voltar { text-align: center; margin-top: 1.5rem; }
         .voltar a { color: var(--azul); text-decoration: none; font-weight: 600; }
         .voltar a:hover { text-decoration: underline; }
+
+        @media(max-width: 768px) {
+            .login-box { padding: 2rem; }
+            .login-box h1 { font-size: 1.5rem; }
+            .campo input { padding: 0.8rem; font-size: 0.95rem; }
+            button[type="submit"] { padding: 0.9rem; font-size: 1rem; }
+        }
+
+        @media(max-width: 480px) {
+            body { padding: 1rem; }
+            .login-box { padding: 1.5rem; width: 95%; }
+            .login-box h1 { font-size: 1.3rem; }
+            .campo { margin-bottom: 1.2rem; }
+        }
     </style>
 </head>
 <body>

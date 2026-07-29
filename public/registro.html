@@ -24,6 +24,21 @@
         .login-link { text-align: center; margin-top: 1rem; color: #888; }
         .login-link a { color: var(--verde-fluo); text-decoration: none; font-weight: 600; }
         .login-link a:hover { text-decoration: underline; }
+
+        @media(max-width: 768px) {
+            .registro-box { padding: 2rem; }
+            .registro-box h1 { font-size: 1.5rem; }
+            .registro-box p { font-size: 0.9rem; }
+            .campo input { padding: 0.8rem; font-size: 0.95rem; }
+            button[type="submit"] { padding: 0.9rem; font-size: 1rem; }
+        }
+
+        @media(max-width: 480px) {
+            body { padding: 1rem; }
+            .registro-box { padding: 1.5rem; width: 95%; }
+            .registro-box h1 { font-size: 1.3rem; }
+            .campo { margin-bottom: 1.2rem; }
+        }
     </style>
 </head>
 <body>
@@ -35,23 +50,23 @@
         <p>Cadastre-se para começar a ganhar visualizações!</p>
         <form id="formRegistro">
             <div class="campo">
-                <label>Nome Completo</label>
-                <input type="text" id="nome" required placeholder="Seu nome completo">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" autocomplete="name" required placeholder="Seu nome completo">
                 <div class="erro" id="erro-nome">Nome é obrigatório</div>
             </div>
             <div class="campo">
-                <label>Email</label>
-                <input type="email" id="email" required placeholder="seu@email.com">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="email" required placeholder="seu@email.com">
                 <div class="erro" id="erro-email">Email inválido</div>
             </div>
             <div class="campo">
-                <label>Senha</label>
-                <input type="password" id="senha" required placeholder="Mínimo 6 caracteres" minlength="6">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" autocomplete="new-password" required placeholder="Mínimo 6 caracteres" minlength="6">
                 <div class="erro" id="erro-senha">Senha deve ter no mínimo 6 caracteres</div>
             </div>
             <div class="campo">
-                <label>Confirmar Senha</label>
-                <input type="password" id="confirmar-senha" required placeholder="Digite a senha novamente">
+                <label for="confirmar-senha">Confirmar Senha</label>
+                <input type="password" id="confirmar-senha" name="confirmar-senha" autocomplete="new-password" required placeholder="Digite a senha novamente">
                 <div class="erro" id="erro-confirmar">As senhas não coincidem</div>
             </div>
             <button type="submit">Criar Conta</button>

@@ -24,6 +24,21 @@
         .card-video h3 { color: var(--verde-fluo); margin-bottom: 0.8rem; }
         .meta { margin-bottom: 0.5rem; font-size: 0.95rem; }
         .vazio { text-align: center; padding: 4rem 2rem; color: #888; font-size: 1.2rem; }
+
+        @media(max-width: 768px) {
+            header { flex-direction: column; gap: 1rem; }
+            header h1 { font-size: 1.3rem; }
+            .saldo { padding: 0.5rem 1rem; font-size: 0.9rem; }
+            .btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
+            .grid-videos { grid-template-columns: 1fr; }
+            .card-video { padding: 1.2rem; }
+        }
+
+        @media(max-width: 480px) {
+            header { padding: 1rem 5%; }
+            .card-video h3 { font-size: 1.1rem; }
+            .meta { font-size: 0.9rem; }
+        }
     </style>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
