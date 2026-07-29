@@ -50,7 +50,8 @@ exports.handler = async (event, context) => {
     if (httpMethod === 'POST') {
       console.log('POST request recebido');
       const data = JSON.parse(event.body);
-      const { titulo, url } = data;
+      const { titulo, link } = data;
+const url = link;
       console.log('Dados do link:', { titulo, url });
       
       const result = await pool.query(
