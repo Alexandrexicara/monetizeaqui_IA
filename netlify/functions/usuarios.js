@@ -1,5 +1,10 @@
 exports.handler = async (event) => {
   try {
+    // Verifica banco e tabelas existentes
+    const dbInfo = await pool.query("SELECT current_database(), current_schema()");
+    console.log("BANCO E SCHEMA:", dbInfo.rows);
+    const listaTabelas = await pool.query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+    console.log("TABELAS EXISTENTES:", listaTabelas.rows);
     // === COLA AQUI TODO O SEU CÓDIGO ORIGINAL ===
 
   } catch (error) {
