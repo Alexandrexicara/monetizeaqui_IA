@@ -25,7 +25,7 @@ exports.handler = async (event) => {
 
     if (httpMethod === 'POST') {
       const dados = JSON.parse(event.body);
-      const { nome, email, senha } = dados;
+      const { nome_completo, email, senha } = dados;
 
       console.log('Cadastro:', { nome, email });
 
@@ -39,8 +39,8 @@ exports.handler = async (event) => {
       }
 
       const novo = await pool.query(
-        'INSERT INTO usuarios (nome, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome, email, creditos',
-        [nome, email, senha]
+        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome, email, creditos',
+        [nome_completo, email, senha]
       );
 
       return { statusCode: 201, headers, body: JSON.stringify({ sucesso: true, usuario: novo.rows[0] }) };
