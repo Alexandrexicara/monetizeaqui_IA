@@ -1,5 +1,14 @@
 exports.handler = async (event) => {
   try {
+    // Lista TODAS as tabelas
+    const todasTabelas = await pool.query(`
+      SELECT schemaname, tablename
+      FROM pg_tables
+      WHERE schemaname = 'public'
+      ORDER BY tablename
+    `);
+    console.log("=== TODAS TABELAS NO BANCO ===");
+    console.table(todasTabelas.rows);
     // Verifica banco e tabelas existentes
     const dbInfo = await pool.query("SELECT current_database(), current_schema()");
     console.log("BANCO E SCHEMA:", dbInfo.rows);
