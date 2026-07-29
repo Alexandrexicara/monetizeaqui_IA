@@ -19,13 +19,15 @@ exports.handler = async (event) => {
 
     if (httpMethod === 'GET') {
       console.log('Buscando usuários...');
-      const res = await pool.query('SELECT id, nome, email, creditos, ativo, criado_em FROM usuarios ORDER BY criado_em DESC');
+      // USA nome_completo EXATAMENTE COMO ESTÁ NO BANCO
+      const res = await pool.query('SELECT id, nome_completo, email, creditos, ativo, criado_em FROM usuarios ORDER BY criado_em DESC');
       return { statusCode: 200, headers, body: JSON.stringify({ sucesso: true, usuarios: res.rows }) };
     }
 
     if (httpMethod === 'POST') {
       const dados = JSON.parse(event.body);
-      const { nome_completo, email, senha } = dados;
+      // RECEBE DO FORM: nome, email, senha
+      const { nome, email, senha } = dados;
 
       console.log('Cadastro:', { nome, email });
 
@@ -38,9 +40,10 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers, body: JSON.stringify({ sucesso: false, erro: 'E-mail já cadastrado' }) };
       }
 
+      // INSERE NA COLUNA CERTA: nome_completo
       const novo = await pool.query(
-        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome, email, creditos',
-        [nome_completo, email, senha]
+        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome_completo, email, creditos',
+        [nome, email, senha]
       );
 
       return { statusCode: 201, headers, body: JSON.stringify({ sucesso: true, usuario: novo.rows[0] }) };
