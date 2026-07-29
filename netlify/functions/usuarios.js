@@ -11,6 +11,7 @@ const headers = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
 };
 
+
 exports.handler = async (event) => {
   try {
     // Lista TODAS as tabelas
