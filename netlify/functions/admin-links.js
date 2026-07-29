@@ -22,32 +22,43 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log('DATABASE_URL configurada:', !!process.env.DATABASE_URL);
+    console.log('Método HTTP:', event.httpMethod);
+    
     const { httpMethod } = event;
 
     if (httpMethod === 'GET') {
+      console.log('GET request recebido');
       const id = event.queryStringParameters?.id;
+      console.log('ID:', id);
       
       if (id) {
-        const result = await pool.query('SELECT * FROM admin_links WHERE id = $1', [id]);
+        console.log('Buscando link por ID:', id);
+        const result = await pool.query('SELECT * FROM links WHERE id = $1', [id]);
         if (result.rows.length === 0) {
           return { statusCode: 404, headers, body: JSON.stringify({ error: 'Link não encontrado' }) };
         }
         return { statusCode: 200, headers, body: JSON.stringify(result.rows[0]) };
       }
       
-      const result = await pool.query('SELECT * FROM admin_links ORDER BY criado_em DESC');
+      console.log('Listando todos os links');
+      const result = await pool.query('SELECT * FROM links ORDER BY criado_em DESC');
+      console.log('Total links:', result.rows.length);
       return { statusCode: 200, headers, body: JSON.stringify(result.rows) };
     }
 
     if (httpMethod === 'POST') {
+      console.log('POST request recebido');
       const data = JSON.parse(event.body);
       const { titulo, link } = data;
+      console.log('Dados do link:', { titulo, link });
       
       const result = await pool.query(
-        'INSERT INTO admin_links (titulo, link) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO links (titulo, link) VALUES ($1, $2) RETURNING *',
         [titulo, link]
       );
       
+      console.log('Link criado:', result.rows[0].id);
       return { statusCode: 201, headers, body: JSON.stringify(result.rows[0]) };
     }
 
@@ -57,7 +68,7 @@ exports.handler = async (event, context) => {
       const { titulo, link, ativo } = data;
       
       const result = await pool.query(
-        'UPDATE admin_links SET titulo = $1, link = $2, ativo = $3 WHERE id = $4 RETURNING *',
+        'UPDATE links SET titulo = $1, link = $2, ativo = $3 WHERE id = $4 RETURNING *',
         [titulo, link, ativo, id]
       );
       
@@ -71,7 +82,7 @@ exports.handler = async (event, context) => {
     if (httpMethod === 'DELETE') {
       const id = event.queryStringParameters?.id;
       
-      const result = await pool.query('DELETE FROM admin_links WHERE id = $1 RETURNING *', [id]);
+      const result = await pool.query('DELETE FROM links WHERE id = $1 RETURNING *', [id]);
       
       if (result.rows.length === 0) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Link não encontrado' }) };
