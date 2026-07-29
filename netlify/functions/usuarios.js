@@ -1,24 +1,22 @@
 exports.handler = async (event) => {
   try {
     // === COLA AQUI TODO O SEU CÓDIGO ORIGINAL ===
-    // === NÃO APAGA NADA, SÓ COLA DENTRO DO TRY ===
 
-    return {
-      statusCode: 200,
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({sucesso: true})
-    };
+  } catch (error) {
+    console.error("========== ERRO ==========");
+    console.error(error);
+    console.error("Mensagem:", error.message);
+    console.error("Código:", error.code);
+    console.error("Detalhe:", error.detail);
+    console.error("Stack:", error.stack);
 
-  } catch (erro) {
-    console.error("ERRO COMPLETO:", erro);
-    console.error(erro.stack);
     return {
       statusCode: 500,
-      headers: {"Content-Type": "application/json"},
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sucesso: false,
-        mensagem: erro.message,
-        detalhes: erro.stack
+        erro: error.message,
+        codigo: error.code,
+        detalhe: error.detail
       })
     };
   }
