@@ -50,12 +50,12 @@ exports.handler = async (event, context) => {
     if (httpMethod === 'POST') {
       console.log('POST request recebido');
       const data = JSON.parse(event.body);
-      const { titulo, link } = data;
-      console.log('Dados do link:', { titulo, link });
+      const { titulo, url } = data;
+      console.log('Dados do link:', { titulo, url });
       
       const result = await pool.query(
-        'INSERT INTO links (titulo, link) VALUES ($1, $2) RETURNING *',
-        [titulo, link]
+        'INSERT INTO links (titulo, url) VALUES ($1, $2) RETURNING *',
+        [titulo, url]
       );
       
       console.log('Link criado:', result.rows[0].id);
@@ -65,11 +65,11 @@ exports.handler = async (event, context) => {
     if (httpMethod === 'PUT') {
       const id = event.queryStringParameters?.id;
       const data = JSON.parse(event.body);
-      const { titulo, link, ativo } = data;
+      const { titulo, url, ativo } = data;
       
       const result = await pool.query(
         'UPDATE links SET titulo = $1, link = $2, ativo = $3 WHERE id = $4 RETURNING *',
-        [titulo, link, ativo, id]
+        [titulo, url, ativo, id]
       );
       
       if (result.rows.length === 0) {
