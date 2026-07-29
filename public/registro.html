@@ -61,7 +61,15 @@
             </div>
             <div class="campo">
                 <label for="senha">Senha</label>
-                <input type="password" id="senha" name="senha" autocomplete="new-password" required placeholder="Mínimo 6 caracteres" minlength="6">
+<div style="position:relative;margin:8px 0;">
+  <input type="password" id="senha" placeholder="Senha" required minlength="6" style="width:100%;padding:8px;">
+  <button type="button" onclick="const i=document.getElementById('senha');i.type=i.type=='password'?'text':'password'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;font-size:18px;">���️</button>
+</div>
+<small style="color:#666;font-size:12px;">
+  • Use letras, números e símbolos<br>
+  • Mínimo 6 caracteres<br>
+  • Não use espaços no começo/fim<br>
+</small>
                 <div class="erro" id="erro-senha">Senha deve ter no mínimo 6 caracteres</div>
             </div>
             <div class="campo">
