@@ -39,9 +39,8 @@ exports.handler = async (event) => {
         return { statusCode: 400, headers, body: JSON.stringify({ sucesso: false, erro: 'E-mail já cadastrado' }) };
       }
 
-      // INSERE NA COLUNA CERTA: nome_completo
       const novo = await pool.query(
-        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome_completo as nome, email, creditos',
+        'INSERT INTO usuarios (nome, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome, email, creditos',
         [nome, email, senha]
       );
 
