@@ -64,54 +64,57 @@
         const usuario = requerirAutenticacao();
         if (!usuario) return;
         
-        const STORAGE_VIDEOS = 'kawi_videos';
-        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
-        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
-        // SISTEMA DE VISUALIZAÇÕES AUTOMÁTICAS GRÁTIS
-        function processarVisualizacoesAutomaticas() {
-            let videos = getDados(STORAGE_VIDEOS);
-            let alterou = false;
-            videos.forEach(v => {
-                if (v.bonusGratisAtivo && v.visualizacoesAutomaticas > 0) {
-                    const adicionar = Math.min(50, v.visualizacoesAutomaticas);
-                    v.visualizacoes += adicionar;
-                    v.visualizacoesAutomaticas -= adicionar;
-                    alterou = true;
-                }
-            });
-            if (alterou) salvarDados(STORAGE_VIDEOS, videos);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            processarVisualizacoesAutomaticas(); // Roda automaticamente ao abrir
-            const videos = getDados(STORAGE_VIDEOS);
+        async function carregarPainel() {
             const listaEl = document.getElementById('lista-videos');
-            document.getElementById('saldo-creditos').textContent = 'Seu saldo: ' + (usuario.creditos || 0) + ' créditos';
-            if (videos.length === 0) {
-                listaEl.innerHTML = '<p class="vazio">Nenhum vídeo cadastrado ainda. Cadastre o seu e ganhe 1.000 visualizações grátis!</p>';
-                return;
+            
+            try {
+                const videos = await api.getVideos();
+                const assinaturas = await api.getAssinaturas();
+                
+                document.getElementById('saldo-creditos').textContent = 'Seu saldo: ' + (usuario.creditos || 0) + ' créditos';
+                
+                if (videos.length === 0) {
+                    listaEl.innerHTML = '<p class="vazio">Nenhum vídeo cadastrado ainda. Cadastre o seu e ganhe 1.000 visualizações grátis!</p>';
+                    return;
+                }
+                
+                listaEl.innerHTML = videos.map(video => {
+                    const ehMeu = video.criador_id === usuario.id;
+                    const temPlano = assinaturas.find(a => a.video_id === video.id);
+                    const planoNome = temPlano ? (temPlano.plano === 'p5000' ? '+5.000/dia' : '+1.000/dia') : null;
+                    
+                    return '<div class="card-video ' + (ehMeu ? 'meu-video' : '') + '">' +
+                        (video.bonus_gratis_ativo ? '<span class="aviso-bonus">🎁 BÔNUS GRÁTIS ATIVO</span><br>' : '') +
+                        '<h3>' + video.titulo + '</h3>' +
+                        '<p class="meta">👤 Criador: ' + video.nome_criador + '</p>' +
+                        '<p class="meta">👁️ Total de visualizações: ' + (video.visualizacoes || 0) + '</p>' +
+                        (planoNome ? '<p class="meta">⭐ Plano: ' + planoNome + '</p>' : '') +
+                        (ehMeu ? 
+                            '<a href="planos.html?video=' + video.id + '" class="btn btn-azul" style="margin-top:1rem;">Contratar Plano Maior</a>' :
+                            '<button class="btn btn-verde" style="margin-top:1rem;" onclick="assistirVideo(' + video.id + ')">👁️ Assistir e Ganhar +1 Crédito</button>'
+                        ) + '</div>';
+                }).join('');
+            } catch (error) {
+                console.error('Erro ao carregar painel:', error);
+                listaEl.innerHTML = '<p class="vazio">Erro ao carregar vídeos. Tente novamente.</p>';
             }
-            listaEl.innerHTML = videos.map(video => {
-                const ehMeu = video.criadorId === usuario.id;
-                return '<div class="card-video ' + (ehMeu ? 'meu-video' : '') + '">' +
-                    (video.bonusGratisAtivo ? '<span class="aviso-bonus">��� BÔNUS GRÁTIS ATIVO</span><br>' : '') +
-                    '<h3>' + video.titulo + '</h3>' +
-                    '<p class="meta">��� Criador: ' + video.nomeCriador + '</p>' +
-                    '<p class="meta">��� Total de visualizações: ' + (video.visualizacoes || 0) + '</p>' +
-                    (ehMeu ? 
-                        '<a href="planos.html?video=' + video.id + '" class="btn btn-azul" style="margin-top:1rem;">Contratar Plano Maior</a>' :
-                        '<button class="btn btn-verde" style="margin-top:1rem;" onclick="assistirVideo(' + video.id + ')">���️ Assistir e Ganhar +1 Crédito</button>'
-                    ) + '</div>';
-            }).join('');
-        });
-        function assistirVideo(videoId) {
-            let videos = getDados(STORAGE_VIDEOS);
-            const idx = videos.findIndex(v => v.id === videoId);
-            if (idx === -1) return;
-            videos[idx].visualizacoes += 1;
-            salvarDados(STORAGE_VIDEOS, videos);
-            alert('✅ Feito! Ganhou +1 crédito.');
-            window.location.reload();
         }
+        
+        async function assistirVideo(videoId) {
+            try {
+                // Incrementar visualizações do vídeo
+                await api.atualizarVideo(videoId, { visualizacoes: 1 });
+                alert('✅ Feito! Ganhou +1 crédito.');
+                carregarPainel();
+            } catch (error) {
+                console.error('Erro ao assistir vídeo:', error);
+                alert('Erro ao processar. Tente novamente.');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPainel();
+        });
     </script>
 </body>
 </html>

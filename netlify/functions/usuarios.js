@@ -19,8 +19,7 @@ exports.handler = async (event) => {
 
     if (httpMethod === 'GET') {
       console.log('Buscando usuários...');
-      // USA nome_completo EXATAMENTE COMO ESTÁ NO BANCO
-      const res = await pool.query('SELECT id, nome_completo, email, creditos, ativo, criado_em FROM usuarios ORDER BY criado_em DESC');
+      const res = await pool.query('SELECT id, nome, email, senha, creditos, criado_em FROM usuarios ORDER BY criado_em DESC');
       return { statusCode: 200, headers, body: JSON.stringify({ sucesso: true, usuarios: res.rows }) };
     }
 
