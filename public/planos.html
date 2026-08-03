@@ -75,28 +75,26 @@
             </div>
         </div>
     </main>
+    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script>
         // Verificar autenticação
         const usuario = requerirAutenticacao();
         if (!usuario) return;
         
-        const STORAGE_ASSINATURAS = 'kawi_assinaturas';
-        const STORAGE_VIDEOS = 'kawi_videos';
-        function getDados(chave) { return JSON.parse(localStorage.getItem(chave) || '[]'); }
-        function salvarDados(chave, dados) { localStorage.setItem(chave, JSON.stringify(dados)); }
-        function escolherPlano(plano) {
+        async function escolherPlano(plano) {
             const params = new URLSearchParams(window.location.search);
             const videoId = parseInt(params.get('video'));
             if (!videoId) { alert('Vídeo não encontrado!'); return; }
-            const assinaturas = getDados(STORAGE_ASSINATURAS);
-            const idx = assinaturas.findIndex(a => a.videoId === videoId);
-            const nova = { videoId, plano, data: new Date().toISOString() };
-            if (idx >= 0) assinaturas[idx] = nova;
-            else assinaturas.push(nova);
-            salvarDados(STORAGE_ASSINATURAS, assinaturas);
-            alert('✅ Plano ' + (plano === 'p1000' ? '+1.000' : '+5.000') + ' ativado! Você mantém seus 1.000 grátis.');
-            window.location.href = 'dashboard.html';
+            
+            try {
+                await api.criarAssinatura(videoId, plano);
+                alert('✅ Plano ' + (plano === 'p1000' ? '+1.000' : '+5.000') + ' ativado! Você mantém seus 1.000 grátis.');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Erro ao assinar plano:', error);
+                alert('❌ Erro ao assinar plano. Tente novamente.');
+            }
         }
     </script>
 </body>

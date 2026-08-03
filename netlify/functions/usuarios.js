@@ -42,7 +42,7 @@ exports.handler = async (event) => {
 
       // INSERE NA COLUNA CERTA: nome_completo
       const novo = await pool.query(
-        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome_completo, email, creditos',
+        'INSERT INTO usuarios (nome_completo, email, senha, creditos) VALUES ($1, $2, $3, 1000) RETURNING id, nome_completo as nome, email, creditos',
         [nome, email, senha]
       );
 

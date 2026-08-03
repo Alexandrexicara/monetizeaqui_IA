@@ -219,6 +219,30 @@ class KawiAPI {
             method: 'DELETE'
         });
     }
+
+    // Distribuição de Links
+    async getDistribuicoes(usuarioId = null, adminLinkId = null) {
+        if (usuarioId) {
+            return this.request(`/distribuir-links?usuario_id=${usuarioId}`);
+        }
+        if (adminLinkId) {
+            return this.request(`/distribuir-links?admin_link_id=${adminLinkId}`);
+        }
+        return this.request('/distribuir-links');
+    }
+
+    async distribuirLink(usuarioId, adminLinkId) {
+        return this.request('/distribuir-links', {
+            method: 'POST',
+            body: JSON.stringify({ usuario_id: usuarioId, admin_link_id: adminLinkId })
+        });
+    }
+
+    async removerDistribuicao(id) {
+        return this.request(`/distribuir-links?id=${id}`, {
+            method: 'DELETE'
+        });
+    }
 }
 
 // Instância global da API

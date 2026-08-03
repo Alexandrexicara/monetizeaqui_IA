@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
       
       if (id) {
         console.log('Buscando link por ID:', id);
-        const result = await pool.query('SELECT * FROM links WHERE id = $1', [id]);
+        const result = await pool.query('SELECT * FROM admin_links WHERE id = $1', [id]);
         if (result.rows.length === 0) {
           return { statusCode: 404, headers, body: JSON.stringify({ error: 'Link não encontrado' }) };
         }
@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
       }
       
       console.log('Listando todos os links');
-      const result = await pool.query('SELECT * FROM links ORDER BY criado_em DESC');
+      const result = await pool.query('SELECT * FROM admin_links ORDER BY criado_em DESC');
       console.log('Total links:', result.rows.length);
       return { statusCode: 200, headers, body: JSON.stringify(result.rows) };
     }
@@ -55,7 +55,7 @@ const url = link;
       console.log('Dados do link:', { titulo, url });
       
       const result = await pool.query(
-        'INSERT INTO links (titulo, url) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO admin_links (titulo, link) VALUES ($1, $2) RETURNING *',
         [titulo, url]
       );
       
@@ -69,7 +69,7 @@ const url = link;
       const { titulo, url, ativo } = data;
       
       const result = await pool.query(
-        'UPDATE links SET titulo = $1, link = $2, ativo = $3 WHERE id = $4 RETURNING *',
+        'UPDATE admin_links SET titulo = $1, link = $2, ativo = $3 WHERE id = $4 RETURNING *',
         [titulo, url, ativo, id]
       );
       
@@ -83,7 +83,7 @@ const url = link;
     if (httpMethod === 'DELETE') {
       const id = event.queryStringParameters?.id;
       
-      const result = await pool.query('DELETE FROM links WHERE id = $1 RETURNING *', [id]);
+      const result = await pool.query('DELETE FROM admin_links WHERE id = $1 RETURNING *', [id]);
       
       if (result.rows.length === 0) {
         return { statusCode: 404, headers, body: JSON.stringify({ error: 'Link não encontrado' }) };
